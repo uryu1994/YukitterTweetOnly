@@ -70,32 +70,13 @@ public class mainController implements Initializable{
 	
 	// --- tweet button which wrote text in TextArea ---//
 	public void onTweet(ActionEvent e) throws TwitterException {
-/*
 		String txt = tweetText.getText();
 		if(txt.length() == 0) return;
 		TwitterFactory.getSingleton().updateStatus(txt);
 
 		tweetText.setText("");
 		System.out.println("Tweet:" + txt);
-*/
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("replyWindow.fxml"));
-        try {
-			loader.load();
-		    Parent root = loader.getRoot();
-		    DialogController controller = loader.getController();
-		    controller.setText("今日の外の天気は晴れですか？");
-		    Scene scene = new Scene(root);
-		    Stage confirmDialog = new Stage(StageStyle.TRANSPARENT);
-		    confirmDialog.setScene(scene);
-		    confirmDialog.setResizable(false);
-		    confirmDialog.setTitle("@ほにゃららら");
-		    
-		    list.add(confirmDialog);
-		    list.get(0).show();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+
 	}
 	
 	//--- show my twitter status when clicked id text---//
