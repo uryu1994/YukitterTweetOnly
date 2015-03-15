@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="72.0" prefWidth="274.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.mainController">
+  <children>
+    <ImageView fx:id="icon" fitHeight="70.0" fitWidth="70.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true" style="" x="0.0" y="0.0" AnchorPane.topAnchor="1.0" />
+    <Button fx:id="tweetButton" layoutX="220.0" layoutY="17.0" minHeight="15.0" mnemonicParsing="false" onAction="#onTweet" prefHeight="16.0" prefWidth="51.0" text="Tweet" textAlignment="LEFT">
+      <font>
+        <Font size="9.0" fx:id="x1" />
+      </font>
+    </Button>
+    <TextArea fx:id="tweetText" focusTraversable="true" layoutX="71.0" layoutY="33.0" opacity="1.0" prefHeight="38.0" prefWidth="200.00009999999747" promptText="いまなにしてる？" text="" wrapText="true" />
+    <Label id="id" fx:id="screenId" layoutX="71.0" layoutY="18.0" onMouseClicked="#onMyStatus" text="\@id" textFill="GREY">
+      <font>
+        <Font name="System Italic" size="12.0" />
+      </font>
+    </Label>
+    <Label fx:id="name" layoutX="71.0" layoutY="1.0" prefHeight="15.999893188476562" text="NO NAME">
+      <font>
+        <Font name="System Bold" size="13.0" />
+      </font>
+    </Label>
+      <Label layoutX="76.0" layoutY="73.0" text="" />
+  </children>
+</AnchorPane>

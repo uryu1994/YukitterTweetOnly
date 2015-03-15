@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="274.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.DialogController">
+  <children>
+    <ImageView fx:id="icon" fitHeight="70.0" fitWidth="70.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true" style="" x="0.0" y="0.0" AnchorPane.topAnchor="1.0" />
+    <Button fx:id="tweetButton" layoutX="220.0" layoutY="1.0" minHeight="15.0" mnemonicParsing="false" onMouseClicked="#onReply" prefHeight="16.0" prefWidth="51.0" text="Close" textAlignment="LEFT">
+      <font>
+        <Font size="9.0" fx:id="x1" />
+      </font>
+    </Button>
+    <Label fx:id="name" layoutX="71.0" layoutY="1.0" onMouseClicked="#onShowStatus" text="NO NAME">
+      <font>
+        <Font name="System Bold" size="13.0" />
+      </font>
+    </Label>
+      <Label layoutX="76.0" layoutY="73.0" text="" />
+      <Label alignment="TOP_LEFT" layoutX="71.0" layoutY="18.0" onMouseClicked="#onClose" prefHeight="60.0" prefWidth="200.0" text="ここにリプライのテキストが表示されます。表示されるんだよ！本当だよ！ここにリプライのテキストが表示されます。表示されるんだよ！本当だよ！ここにリプライのテキストが表示されます。表示されるんだよ！" wrapText="true">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+  </children>
+</AnchorPane>
