@@ -3,9 +3,12 @@ package application;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import twitter4j.Status;
+import twitter4j.TwitterFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -13,6 +16,8 @@ import javafx.stage.Stage;
 public class ReplyDialogController implements Initializable {
 	
 	private int num;
+	
+	private Status status;
 	
 	private Stage stage;
 	
@@ -42,20 +47,24 @@ public class ReplyDialogController implements Initializable {
 		this.name.setText(name);
 	}
 
-	public void setIcon() {
-		
+	public void setIcon(Image image) {
+		this.icon.setImage(image);
 	}
 	
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
 	public Stage getStage() {
 		return this.stage;
 	}
 	
 	public void onReply(MouseEvent e) {
-		
+		mainController.getInstance().setText("@"+status.getUser().getScreenName()+" ");
 	}
 	
 	public void onShowStatus(MouseEvent e) {

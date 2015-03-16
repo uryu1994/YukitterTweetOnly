@@ -22,5 +22,8 @@ public class Main extends Application {
 		}
 	}
 	
-	
+	@Override
+	public void finalize() {
+		mainController.getTwitterStreamInstance().shutdown();
+	}
 }

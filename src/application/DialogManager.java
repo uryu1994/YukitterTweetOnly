@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import twitter4j.Status;
+import twitter4j.TwitterFactory;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class DialogManager {
-	int counter=0;
 	private static DialogManager instance;
 	private static List<ReplyDialogController> dialogs;
 	
@@ -19,7 +23,7 @@ public class DialogManager {
 		dialogs  = new ArrayList<ReplyDialogController>();
 	}
 	
-	public void createDialog() {
+	public void createDialog(Status status) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("replyDialog.fxml"));
 		try {
 			loader.load();
@@ -30,17 +34,19 @@ public class DialogManager {
 			Stage dialog = new Stage(StageStyle.TRANSPARENT);
 			dialog.setScene(scene);
 			dialog.setResizable(false);
+			
+			controller.setStatus(status);
+			controller.setUserName(status.getUser().getName());
+			controller.setText(status.getText());
+			Image image = new Image(status.getUser().getBiggerProfileImageURL());
+			controller.setIcon(image);
 
-			controller.setUserName(counter+"個目の追加");
-			controller.setText("今日の天気は晴れですか？");
 			controller.setNum(dialogs.size());
 			controller.setStage(dialog);
 			
 			dialogs.add(controller);
-			counter++;
 			showDialogs();
 			
-			System.out.println("ADD: add"+ counter +" times.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
