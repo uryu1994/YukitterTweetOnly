@@ -27,65 +27,79 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
 
 public class mainController implements Initializable{
 	
-	public static mainController instance;
-	public static TwitterStream twitterStream;
+	private static mainController instance;
+	private static TwitterStream twitterStream;
 	
 	public ArrayList<Stage> list = new ArrayList<Stage>();
 	
 	// TextArea wrote tweet text
 	@FXML
-	public TextArea tweetText;
+	private TextArea tweetText;
 
 	// User Name
 	@FXML
-	public Label name;
+	private Label name;
 	
 	// TwitterID
 	@FXML
-	public Label screenId;
+	private Label screenId;
 	
 	// twitter icon
 	@FXML
-	public ImageView icon;
+	private ImageView icon;
 	
 	@Override
-	public void initialize(URL url, ResourceBundle rb) {		
-		//--- get user status ---//
+	public void initialize(URL url, ResourceBundle rb) {
+		//--- ユーザー情報を取得して表示 ---//
 		try {
 			name.setText(TwitterFactory.getSingleton().verifyCredentials().getName());
 			screenId.setText("@"+TwitterFactory.getSingleton().getScreenName());
 			Image image = new Image(TwitterFactory.getSingleton().verifyCredentials().getBiggerProfileImageURL());
 			icon.setImage(image);
 		} catch (IllegalStateException | TwitterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		//--- save instance of oneself---//
-		instance = this;
+		
+		//--- ツイッターストリームのインスタンス取得 ---//
+        twitterStream = TwitterStreamFactory.getSingleton();
+		twitterStream.addListener(new MyUserStreamAdapter());
+		twitterStream.user();
+		
+		this.instance = this;
+		
+		DialogManager.getInstance();
 	}
 	
-	// --- tweet button which wrote text in TextArea ---//
+	// --- 本文をツイートするボタンの処理 ---//
 	public void onTweet(ActionEvent e) throws TwitterException {
 		String txt = tweetText.getText();
 		if(txt.length() == 0) return;
 		TwitterFactory.getSingleton().updateStatus(txt);
 
 		tweetText.setText("");
-		System.out.println("Tweet:" + txt);
-
+		System.out.println("-->> Tweet:" + txt);
 	}
 	
-	//--- show my twitter status when clicked id text---//
+	//--- IDをクリックするとステータス画面が開いちゃうぞ---//
 	public void onMyStatus(MouseEvent e) {
 		System.out.println("onMyStatus");
 	}
 	
-	//--- get instance of this controller ---//
+	public void setText(String s) {
+		tweetText.setText(s);
+	}
+	
+	//--- TwitterStreamインスタンスのgetter ---//
+	public static TwitterStream getTwitterStreamInstance() {
+		return twitterStream;
+	}
+	
 	public static mainController getInstance() {
 		return instance;
 	}
+	
 }

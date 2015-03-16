@@ -1,6 +1,9 @@
 package application;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import twitter4j.Status;
+import twitter4j.TwitterFactory;
 import twitter4j.UserStreamAdapter;
 
 public class MyUserStreamAdapter extends UserStreamAdapter {
@@ -8,11 +11,12 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	public void onStatus(Status status) {
 		super.onStatus(status);
 		
-		if(status.getInReplyToScreenName().equals("guru_yuki_mew")) {
+		//--- if mention come ---//
+		if("Guru_Yuki_mew".equals(status.getInReplyToScreenName())) {
 			System.out.println("Reply!!!!");
+			Platform.runLater( () -> {
+				DialogManager.getInstance().createDialog(status);
+			});
 		}
-		
-//		mainController.observableList.add(status);
-		System.out.println(status.getUser().getName() + "@" + status.getUser().getScreenName() + ") >> " + status.getText());
-   	}	
+	}
 }
