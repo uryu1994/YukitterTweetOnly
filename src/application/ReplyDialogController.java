@@ -65,6 +65,7 @@ public class ReplyDialogController implements Initializable {
 	
 	public void onReply(MouseEvent e) {
 		mainController.getInstance().setText("@"+status.getUser().getScreenName()+" ");
+		DialogManager.getInstance().hideDialog(num);
 	}
 	
 	public void onShowStatus(MouseEvent e) {
