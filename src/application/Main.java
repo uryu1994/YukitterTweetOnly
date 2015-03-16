@@ -1,6 +1,7 @@
 package application;
 	
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
@@ -22,8 +23,12 @@ public class Main extends Application {
 		}
 	}
 	
+	public static void main(String [] args) {
+		launch(args);
+	}
+	
 	@Override
-	public void finalize() {
+	public void stop() {
 		mainController.getTwitterStreamInstance().shutdown();
 	}
 }
