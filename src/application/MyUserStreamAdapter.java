@@ -8,11 +8,12 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	public void onStatus(Status status) {
 		super.onStatus(status);
 		
+		//--- if mention come ---//
 		if(status.getInReplyToScreenName().equals("guru_yuki_mew")) {
 			System.out.println("Reply!!!!");
 		}
 		
 //		mainController.observableList.add(status);
 		System.out.println(status.getUser().getName() + "@" + status.getUser().getScreenName() + ") >> " + status.getText());
-   	}	
+   	}
 }
