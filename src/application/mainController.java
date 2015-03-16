@@ -30,7 +30,6 @@ import twitter4j.TwitterStream;
 
 public class mainController implements Initializable{
 	
-	public static mainController instance;
 	public static TwitterStream twitterStream;
 	
 	public ArrayList<Stage> list = new ArrayList<Stage>();
@@ -63,9 +62,6 @@ public class mainController implements Initializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//--- save instance of oneself---//
-		instance = this;
 	}
 	
 	// --- tweet button which wrote text in TextArea ---//
@@ -83,10 +79,5 @@ public class mainController implements Initializable{
 	//--- show my twitter status when clicked id text---//
 	public void onMyStatus(MouseEvent e) {
 		System.out.println("onMyStatus");
-	}
-	
-	//--- get instance of this controller ---//
-	public static mainController getInstance() {
-		return instance;
 	}
 }
