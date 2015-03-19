@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.Status;
-import twitter4j.TwitterFactory;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

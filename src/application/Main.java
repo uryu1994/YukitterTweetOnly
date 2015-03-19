@@ -1,7 +1,6 @@
 package application;
 	
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
@@ -15,6 +14,7 @@ public class Main extends Application {
 		try {
 			Parent view = FXMLLoader.load(getClass().getResource("tweetOnly.fxml"));
 			Scene scene = new Scene(view);
+			primaryStage.setResizable(false);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Yukitter");
 			primaryStage.show();
@@ -29,6 +29,6 @@ public class Main extends Application {
 	
 	@Override
 	public void stop() {
-		mainController.getTwitterStreamInstance().shutdown();
+		MainController.getTwitterStreamInstance().shutdown();
 	}
 }
