@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,7 +19,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -37,6 +37,9 @@ public class MainController implements Initializable{
 	@FXML
 	private TextArea tweetText;
 
+	@FXML
+	private MenuItem menuTweet;
+	
 	// User Name
 	@FXML
 	private Label name;
@@ -70,6 +73,9 @@ public class MainController implements Initializable{
         twitterStream = TwitterStreamFactory.getSingleton();
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
+		
+		menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER,
+				  KeyCombination.SHORTCUT_DOWN));
 		
 		instance = this;
 		
