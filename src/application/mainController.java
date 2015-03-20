@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -99,20 +98,6 @@ public class MainController implements Initializable{
 			e.printStackTrace();
 		}
 	}
-	
-	//--- ツイートボタンにショートカットキーを登録 ---//
-	  private void setTweetMnemonic() {
-	  Scene scene = tweetButton.getScene();
-	  System.out.println(scene);
-	  scene.getAccelerators().put(
-			  new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN),
-		      new Runnable() {
-		        @Override public void run() {
-		        	executeTweet();
-		        }
-		      }
-		    );
-		  }
 	
 	//--- IDをクリックするとステータス画面が開いちゃうぞ---//
 	public void onMyStatus(MouseEvent e) {
