@@ -11,7 +11,7 @@
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="72.0" prefWidth="274.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
   <children>
     <ImageView fx:id="icon" fitHeight="70.0" fitWidth="70.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true" style="" x="0.0" y="0.0" AnchorPane.topAnchor="1.0" />
-    <TextArea fx:id="tweetText" focusTraversable="true" layoutX="71.0" layoutY="33.0" opacity="1.0" prefHeight="38.0" prefWidth="200.00009999999747" promptText="いまなにしてる？" text="" wrapText="true" />
+    <TextArea fx:id="tweetText" focusTraversable="true" layoutX="71.0" layoutY="33.0" onKeyReleased="#checkTextCount" opacity="1.0" prefHeight="38.0" prefWidth="200.00009999999747" promptText="いまなにしてる？" text="" wrapText="true" />
     <Label id="id" fx:id="screenId" layoutX="71.0" layoutY="18.0" onMouseClicked="#onMyStatus" text="\@id" textFill="GREY">
       <font>
         <Font name="System Italic" size="12.0" />
@@ -32,5 +32,6 @@
           </Menu>
         </menus>
       </MenuBar>
+      <Label fx:id="textCounter" layoutX="249.0" layoutY="17.0" text="140" />
   </children>
 </AnchorPane>

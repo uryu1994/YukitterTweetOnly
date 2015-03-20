@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import twitter4j.StatusUpdate;
@@ -41,6 +42,9 @@ public class MainController implements Initializable{
 	@FXML
 	private MenuItem menuTweet;
 	
+	@FXML
+	private Label textCounter;
+	
 	// User Name
 	@FXML
 	private Label name;
@@ -65,7 +69,6 @@ public class MainController implements Initializable{
 			screenId.setText("@"+TwitterFactory.getSingleton().getScreenName());
 			Image image = new Image(TwitterFactory.getSingleton().verifyCredentials().getBiggerProfileImageURL());
 			icon.setImage(image);
-			
 		} catch (IllegalStateException | TwitterException e) {
 			e.printStackTrace();
 		}
@@ -89,6 +92,7 @@ public class MainController implements Initializable{
 	}
 	
 	private void executeTweet() {
+		stage.setHeight(500);
 		String txt = tweetText.getText();
 		if(txt.length() == 0) return;		
 		try {
@@ -126,9 +130,20 @@ public class MainController implements Initializable{
 		tweetText.setText(s);
 	}
 	
-	//--- TwitterStreamインスタンスのgetter ---//
-	public static TwitterStream getTwitterStreamInstance() {
-		return twitterStream;
+	public void checkTextCount (KeyEvent e) {
+		int count = 140 - tweetText.getText().length();
+		textCounter.setText(String.valueOf(count));
+		if(count < 10) {
+			textCounter.setStyle("-fx-text-fill: red;");
+		} else {
+			textCounter.setStyle("-fx-text-fill: black;");
+		}
+	}
+	
+	public static void shutdownTwitterStream() {
+		if(twitterStream != null) {
+			twitterStream.shutdown();
+		}
 	}
 	
 	public static MainController getInstance() {
