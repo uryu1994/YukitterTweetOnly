@@ -18,6 +18,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -31,7 +32,8 @@ public class MainController implements Initializable{
 	public ArrayList<Stage> list = new ArrayList<Stage>();
 	
 	private Stage stage;
-	
+	private Long inReplyToStatusId;
+
 	// TextArea wrote tweet text
 	@FXML
 	private TextArea tweetText;
@@ -88,10 +90,17 @@ public class MainController implements Initializable{
 	
 	private void executeTweet() {
 		String txt = tweetText.getText();
-		if(txt.length() == 0) return;
+		if(txt.length() == 0) return;		
 		try {
-			TwitterFactory.getSingleton().updateStatus(txt);
-			tweetText.setText("");
+			StatusUpdate status = new StatusUpdate(txt);
+			
+			if(inReplyToStatusId != null) {
+				status.setInReplyToStatusId(inReplyToStatusId);
+			}
+			
+			TwitterFactory.getSingleton().updateStatus(status);
+			tweetText.clear();
+			inReplyToStatusId = null;
 			System.out.println("-->> Tweet:" + txt);
 		} catch (TwitterException e) {
 			// TODO Auto-generated catch block
@@ -112,7 +121,8 @@ public class MainController implements Initializable{
 		return this.stage;
 	}
 	
-	public void setText(String s) {
+	public void setText(String s, Long inReplyToStatusId) {
+		this.inReplyToStatusId = inReplyToStatusId;
 		tweetText.setText(s);
 	}
 	
