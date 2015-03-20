@@ -18,7 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class TweetDialogController {
+public class TweetDialogController implements Initializable {
 
 	private Stage stage;
 	
@@ -28,16 +28,16 @@ public class TweetDialogController {
 	@FXML
 	private Button tweetButton;
 	
-	public TweetDialogController() {
-		System.out.println("Start initialize");
+	public void initialize(URL location, ResourceBundle resources) {
 		try {
 			System.out.println("Start Loader");
-//			Parent loader = FXMLLoader.load(getClass().getResource("tweetDialog.fxml"));
-
-			Scene scene = new Scene(FXMLLoader.load(getClass().getResource("tweetDialog.fxml")));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetDialog.fxml"));
+			Scene scene = new Scene(loader.load());
 			System.out.println("END Loader");
 			Stage stage = new Stage(StageStyle.UNIFIED);
 			stage.setScene(scene);
+
+			TweetDialogController tweetDialogController = loader.<TweetDialogController>getController();
 			stage.show();
 			stage.toFront();
 			
