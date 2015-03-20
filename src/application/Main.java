@@ -12,18 +12,27 @@ public class Main extends Application {
 
 	public void start(Stage primaryStage) {
 		try {
-			Parent view = FXMLLoader.load(getClass().getResource("tweetOnly.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetOnly.fxml"));
+			Parent view = loader.load();
+
 			Scene scene = new Scene(view);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Yukitter");
 			primaryStage.show();
+			MainController mainController = (MainController) loader.getController();
+			mainController.setStage(primaryStage);
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
+	public static void main(String [] args) {
+		launch(args);
+	}
+	
 	@Override
-	public void finalize() {
-		mainController.getTwitterStreamInstance().shutdown();
+	public void stop() {
+		MainController.getTwitterStreamInstance().shutdown();
 	}
 }

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import twitter4j.Status;
-import twitter4j.TwitterFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -64,8 +63,10 @@ public class ReplyDialogController implements Initializable {
 	}
 	
 	public void onReply(MouseEvent e) {
-		mainController.getInstance().setText("@"+status.getUser().getScreenName()+" ");
+		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ");
 		DialogManager.getInstance().hideDialog(num);
+//	    MainController.getInstance().getStage().isFocused();
+		
 	}
 	
 	public void onShowStatus(MouseEvent e) {
@@ -74,5 +75,6 @@ public class ReplyDialogController implements Initializable {
 	
 	public void onCloseDialog(MouseEvent e) {
 		DialogManager.getInstance().hideDialog(num);
+		
 	}
 }

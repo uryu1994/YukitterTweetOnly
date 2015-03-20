@@ -1,45 +1,44 @@
 package application;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 
-public class mainController implements Initializable{
+public class MainController implements Initializable{
 	
-	private static mainController instance;
+	private static MainController instance;
 	private static TwitterStream twitterStream;
 	
 	public ArrayList<Stage> list = new ArrayList<Stage>();
+	
+	private Stage stage;
 	
 	// TextArea wrote tweet text
 	@FXML
 	private TextArea tweetText;
 
+	@FXML
+	private MenuItem menuTweet;
+	
 	// User Name
 	@FXML
 	private Label name;
@@ -52,6 +51,10 @@ public class mainController implements Initializable{
 	@FXML
 	private ImageView icon;
 	
+	// ツイートボタン
+	@FXML
+	private Button tweetButton;
+	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		//--- ユーザー情報を取得して表示 ---//
@@ -60,6 +63,7 @@ public class mainController implements Initializable{
 			screenId.setText("@"+TwitterFactory.getSingleton().getScreenName());
 			Image image = new Image(TwitterFactory.getSingleton().verifyCredentials().getBiggerProfileImageURL());
 			icon.setImage(image);
+			
 		} catch (IllegalStateException | TwitterException e) {
 			e.printStackTrace();
 		}
@@ -69,24 +73,43 @@ public class mainController implements Initializable{
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
 		
-		this.instance = this;
+		menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER,
+				  KeyCombination.SHORTCUT_DOWN));
+		
+		instance = this;
 		
 		DialogManager.getInstance();
 	}
 	
 	// --- 本文をツイートするボタンの処理 ---//
-	public void onTweet(ActionEvent e) throws TwitterException {
+	public void onTweet(ActionEvent e){
+		executeTweet();
+	}
+	
+	private void executeTweet() {
 		String txt = tweetText.getText();
 		if(txt.length() == 0) return;
-		TwitterFactory.getSingleton().updateStatus(txt);
-
-		tweetText.setText("");
-		System.out.println("-->> Tweet:" + txt);
+		try {
+			TwitterFactory.getSingleton().updateStatus(txt);
+			tweetText.setText("");
+			System.out.println("-->> Tweet:" + txt);
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//--- IDをクリックするとステータス画面が開いちゃうぞ---//
 	public void onMyStatus(MouseEvent e) {
 		System.out.println("onMyStatus");
+	}
+	
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+	
+	public Stage getStage() {
+		return this.stage;
 	}
 	
 	public void setText(String s) {
@@ -98,7 +121,7 @@ public class mainController implements Initializable{
 		return twitterStream;
 	}
 	
-	public static mainController getInstance() {
+	public static MainController getInstance() {
 		return instance;
 	}
 	

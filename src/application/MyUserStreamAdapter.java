@@ -1,9 +1,7 @@
 package application;
 
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import twitter4j.Status;
-import twitter4j.TwitterFactory;
 import twitter4j.UserStreamAdapter;
 
 public class MyUserStreamAdapter extends UserStreamAdapter {
