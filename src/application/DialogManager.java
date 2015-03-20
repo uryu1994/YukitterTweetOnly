@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.Status;
-import twitter4j.TwitterFactory;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -20,7 +19,7 @@ public class DialogManager {
 	private static List<ReplyDialogController> dialogs;
 	
 	private DialogManager() {
-		dialogs  = new ArrayList<ReplyDialogController>();
+		dialogs  = new ArrayList<ReplyDialogController>(); 
 	}
 	
 	public void createDialog(Status status) {
@@ -45,6 +44,7 @@ public class DialogManager {
 			controller.setStage(dialog);
 			
 			dialogs.add(controller);
+			sound();
 			showDialogs();
 			
 		} catch (IOException e) {
@@ -78,6 +78,12 @@ public class DialogManager {
 		for(int i=num; i<dialogs.size();i++) {
 			dialogs.get(i).setNum(i);
 		}
+	}
+	
+	private void sound() {
+	    Media sound = new Media(getClass().getResource("sample.mp3").toExternalForm());
+	    MediaPlayer mediaPlayer = new MediaPlayer(sound);
+	    mediaPlayer.play();
 	}
 	
 	public static DialogManager getInstance() {

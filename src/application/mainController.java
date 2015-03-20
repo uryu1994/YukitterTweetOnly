@@ -24,12 +24,14 @@ import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 
-public class mainController implements Initializable{
+public class MainController implements Initializable{
 	
-	private static mainController instance;
+	private static MainController instance;
 	private static TwitterStream twitterStream;
 	
 	public ArrayList<Stage> list = new ArrayList<Stage>();
+	
+	private Stage stage;
 	
 	// TextArea wrote tweet text
 	@FXML
@@ -59,6 +61,7 @@ public class mainController implements Initializable{
 			screenId.setText("@"+TwitterFactory.getSingleton().getScreenName());
 			Image image = new Image(TwitterFactory.getSingleton().verifyCredentials().getBiggerProfileImageURL());
 			icon.setImage(image);
+			
 		} catch (IllegalStateException | TwitterException e) {
 			e.printStackTrace();
 		}
@@ -68,7 +71,7 @@ public class mainController implements Initializable{
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
 		
-		this.instance = this;
+		instance = this;
 		
 		DialogManager.getInstance();
 	}
@@ -110,6 +113,14 @@ public class mainController implements Initializable{
 		System.out.println("onMyStatus");
 	}
 	
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+	
+	public Stage getStage() {
+		return this.stage;
+	}
+	
 	public void setText(String s) {
 		tweetText.setText(s);
 	}
@@ -119,7 +130,7 @@ public class mainController implements Initializable{
 		return twitterStream;
 	}
 	
-	public static mainController getInstance() {
+	public static MainController getInstance() {
 		return instance;
 	}
 	
