@@ -1,12 +1,16 @@
 package application;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
+import serialize.OAuthConfiguration;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -14,6 +18,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.OAuthAuthorization;
 import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.conf.ConfigurationContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +33,7 @@ import javafx.stage.StageStyle;
 
 public class OAuthController {
 	
+	private OAuthConfiguration consumer = null;
 	private RequestToken requestToken;
 	private static AccessToken accessToken;
 	private Twitter twitter;
@@ -43,41 +49,28 @@ public class OAuthController {
 	@FXML
 	private TextField pinText;
 	
-	@FXML
-	private Button authButton;
-	
 	public OAuthController (Stage owner) {
 		this.file = new File(".yukitter_setting");
 		this.owner = owner;
+		DeserializationOAuthConfiguration();
+		System.out.println(consumer);
 		
-		try {
-			if(file.createNewFile()) {
-				showOAuthWindow();
-			} else {
-				loadAccessToken();
-			}			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(file.exists()) {
+			loadAccessToken();	
+		} else {
+			showOAuthWindow();
 		}
 	}
 	
-	@SuppressWarnings("resource")
 	public void loadAccessToken() {
-		String accessTokenKey;
-		String accessTokenSecretKey;
-
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			try {
-				accessTokenKey = br.readLine();
-				accessTokenSecretKey = br.readLine();
+				OAuthConfiguration.setAccessToken(br.readLine());
+				OAuthConfiguration.setAccessTokenSecret(br.readLine());
 				br.close();
-				System.out.println(accessTokenKey);
-				System.out.println(accessTokenSecretKey);
-				accessToken = new AccessToken(accessTokenKey, accessTokenSecretKey);
-
-				MainController main = new MainController(accessToken);
+				
+				MainController main = new MainController(OAuthConfiguration.createConfiguration());
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -109,9 +102,9 @@ public class OAuthController {
 			e.printStackTrace();
 		}
 		
-		twitter = TwitterFactory.getSingleton();
-//		twitter.setOAuthConsumer("[consumer key]", "[consumer secret]");
 		try {
+			twitter = TwitterFactory.getSingleton();
+			twitter.setOAuthConsumer(OAuthConfiguration.getConsumerKey(), OAuthConfiguration.getConsumerSecret());
 			requestToken = twitter.getOAuthRequestToken();
 		} catch (TwitterException e) {
 			e.printStackTrace();
@@ -123,10 +116,6 @@ public class OAuthController {
 		if(pinText.getText().length() > 0) {
 			try {
 				accessToken = twitter.getOAuthAccessToken(requestToken, pinText.getText());
-				
-				//--- デバッグ　保存処理を実装
-				System.out.println("AccessToken = [[" + accessToken.getToken() + "]]");
-				System.out.println("AccessTokenSecret = [[" + accessToken.getTokenSecret()+"]]");
 			} catch (TwitterException te) {
 				if(401 == te.getStatusCode()){
 					//--- 認証に失敗した場合の処理 ---//
@@ -136,9 +125,11 @@ public class OAuthController {
 				}
 			}
 		}
-		writeAccessToken();
 		stage.close();
-		MainController main = new MainController(accessToken);
+		OAuthConfiguration.setAccessToken(accessToken.getToken());
+		OAuthConfiguration.setAccessTokenSecret(accessToken.getTokenSecret());
+		writeAccessToken();
+		MainController main = new MainController(OAuthConfiguration.createConfiguration());
 	}
 	
 	private void writeAccessToken() {
@@ -151,4 +142,29 @@ public class OAuthController {
 			e.printStackTrace();
 		}
 	}
+	
+	public void DeserializationOAuthConfiguration() {
+		System.out.println("DeserializationConsumer");
+	    ObjectInputStream in = null;
+	    try {
+	    	in = new ObjectInputStream(
+	    			new BufferedInputStream(ClassLoader.getSystemResourceAsStream("serialize/OAuth")));
+	    	consumer = (OAuthConfiguration)in.readObject();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 }

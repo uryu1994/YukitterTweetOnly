@@ -1,15 +1,11 @@
 package application;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -30,7 +26,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
-import twitter4j.auth.AccessToken;
+import twitter4j.auth.OAuthAuthorization;
 
 public class MainController {
 	private static MainController instance;
@@ -38,7 +34,7 @@ public class MainController {
 	public ArrayList<Stage> list = new ArrayList<Stage>();
 	private Stage stage;
 	private Long inReplyToStatusId;
-	Twitter twitter;
+	private Twitter twitter;
 	
 	@FXML
 	private Label textCounter;
@@ -61,7 +57,7 @@ public class MainController {
 	@FXML
 	private Button tweetButton;
 
-	public MainController (AccessToken accessToken){
+	public MainController (OAuthAuthorization oauth){
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetOnly.fxml"));
 			loader.setController(this);
@@ -75,7 +71,6 @@ public class MainController {
 			
 			//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
 			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
-		
 			
 			stage.show();
 		} catch (IOException e) {
@@ -85,8 +80,8 @@ public class MainController {
 		
 		// --- ユーザー情報を取得して表示 ---//
 		try {
-			twitter = TwitterFactory.getSingleton();
-			twitter.setOAuthAccessToken(accessToken);
+			
+			twitter = new TwitterFactory().getInstance(oauth);
 			name.setText(twitter.verifyCredentials().getName());
 			screenId.setText("@"+ twitter.getScreenName());
 			Image image = new Image(twitter.verifyCredentials().getBiggerProfileImageURL());
@@ -96,8 +91,7 @@ public class MainController {
 		}
 		
 		// --- ツイッターストリームのインスタンス取得 ---//
-		twitterStream = TwitterStreamFactory.getSingleton();
-		twitterStream.setOAuthAccessToken(accessToken);
+		twitterStream = new TwitterStreamFactory().getInstance(oauth);
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
 	
