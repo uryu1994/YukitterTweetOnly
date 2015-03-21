@@ -65,11 +65,16 @@ public class ReplyDialogController implements Initializable {
 	}
 	
 	public void onReply(MouseEvent e) {
+<<<<<<< HEAD
+		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
+=======
 		TweetDialogController tweetDialogController = new TweetDialogController();
 		System.out.println("@"+status.getUser().getScreenName()+" ");
 //		tweetDialogController.setText("@"+status.getUser().getScreenName()+" ");
-		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
+>>>>>>> verySmall
 		DialogManager.getInstance().hideDialog(num);
+//	    MainController.getInstance().getStage().isFocused();
+		
 	}
 	
 	public Long getInRwplyToStatusId() {
@@ -82,5 +87,6 @@ public class ReplyDialogController implements Initializable {
 	
 	public void onCloseDialog(MouseEvent e) {
 		DialogManager.getInstance().hideDialog(num);
+		
 	}
 }
