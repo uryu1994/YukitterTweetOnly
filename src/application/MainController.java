@@ -1,12 +1,16 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -19,18 +23,22 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.auth.AccessToken;
 
-public class MainController implements Initializable {
+public class MainController {
 	private static MainController instance;
 	private static TwitterStream twitterStream;
 	public ArrayList<Stage> list = new ArrayList<Stage>();
 	private Stage stage;
 	private Long inReplyToStatusId;
+	Twitter twitter;
 	
 	@FXML
 	private Label textCounter;
@@ -53,13 +61,35 @@ public class MainController implements Initializable {
 	@FXML
 	private Button tweetButton;
 
-	@Override
-	public void initialize(URL url, ResourceBundle rb) {
+	public MainController (AccessToken accessToken){
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetOnly.fxml"));
+			loader.setController(this);
+			loader.load();
+			
+			Scene scene = new Scene(loader.getRoot());
+			stage = new Stage(StageStyle.UNIFIED);
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.setTitle("Yukitter");
+			
+			//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
+			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
+		
+			
+			stage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// --- ユーザー情報を取得して表示 ---//
 		try {
-			name.setText(TwitterFactory.getSingleton().verifyCredentials().getName());
-			screenId.setText("@"+ TwitterFactory.getSingleton().getScreenName());
-			Image image = new Image(TwitterFactory.getSingleton().verifyCredentials().getBiggerProfileImageURL());
+			twitter = TwitterFactory.getSingleton();
+			twitter.setOAuthAccessToken(accessToken);
+			name.setText(twitter.verifyCredentials().getName());
+			screenId.setText("@"+ twitter.getScreenName());
+			Image image = new Image(twitter.verifyCredentials().getBiggerProfileImageURL());
 			icon.setImage(image);
 		} catch (IllegalStateException | TwitterException e) {
 			e.printStackTrace();
@@ -67,12 +97,10 @@ public class MainController implements Initializable {
 		
 		// --- ツイッターストリームのインスタンス取得 ---//
 		twitterStream = TwitterStreamFactory.getSingleton();
+		twitterStream.setOAuthAccessToken(accessToken);
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
-
-		//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
-		menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
-		
+	
 		//--- 自身のインスタンスを保持 ---//
 		instance = this;
 		
@@ -85,7 +113,7 @@ public class MainController implements Initializable {
 		executeTweet();
 	}
 
-	//---  ---//
+	//--- ツイートを実行 ---//
 	private void executeTweet() {
 		String txt = tweetText.getText();
 		if (txt.length() == 0)
@@ -95,13 +123,13 @@ public class MainController implements Initializable {
 			if(inReplyToStatusId != null) {
 				status.setInReplyToStatusId(inReplyToStatusId);
 			}
-			
-			TwitterFactory.getSingleton().updateStatus(status);
+			twitter.updateStatus(status);
 			tweetText.clear();
 			inReplyToStatusId = null;
 			System.out.println("-->> Tweet:" + txt);
 		} catch (TwitterException e) {
 			// TODO Auto-generated catch block
+			System.out.println("TWITTER EXCEPTION");
 			e.printStackTrace();
 		}
 	}
