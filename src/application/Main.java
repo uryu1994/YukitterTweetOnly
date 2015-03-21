@@ -1,5 +1,7 @@
 package application;
 	
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -10,17 +12,13 @@ public class Main extends Application {
 	
 	@Override
 
-	public void start(Stage primaryStage) {
-		try {
+	public void start(Stage primaryStage) throws IOException {
 			Parent view = FXMLLoader.load(getClass().getResource("tweetOnly.fxml"));
 			Scene scene = new Scene(view);
 			primaryStage.setResizable(false);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Yukitter");
 			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public static void main(String [] args) {
@@ -28,7 +26,8 @@ public class Main extends Application {
 	}
 	
 	@Override
-	public void stop() {
-		MainController.getTwitterStreamInstance().shutdown();
+	public void stop() throws Exception {
+		MainController.shutdownTwitterStream();
+		super.stop();
 	}
 }

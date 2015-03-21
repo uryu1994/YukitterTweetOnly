@@ -10,8 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 public class ReplyDialogController implements Initializable {
@@ -65,9 +63,7 @@ public class ReplyDialogController implements Initializable {
 	}
 	
 	public void onReply(MouseEvent e) {
-		TweetDialogController tweetDialogController = new TweetDialogController();
 		System.out.println("@"+status.getUser().getScreenName()+" ");
-//		tweetDialogController.setText("@"+status.getUser().getScreenName()+" ");
 		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
 		DialogManager.getInstance().hideDialog(num);
 	}
