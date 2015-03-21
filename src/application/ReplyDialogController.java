@@ -63,10 +63,13 @@ public class ReplyDialogController implements Initializable {
 	}
 	
 	public void onReply(MouseEvent e) {
-		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ");
+		System.out.println("@"+status.getUser().getScreenName()+" ");
+		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
 		DialogManager.getInstance().hideDialog(num);
-//	    MainController.getInstance().getStage().isFocused();
-		
+	}
+	
+	public Long getInRwplyToStatusId() {
+		return status.getInReplyToStatusId();
 	}
 	
 	public void onShowStatus(MouseEvent e) {
@@ -75,6 +78,5 @@ public class ReplyDialogController implements Initializable {
 	
 	public void onCloseDialog(MouseEvent e) {
 		DialogManager.getInstance().hideDialog(num);
-		
 	}
 }

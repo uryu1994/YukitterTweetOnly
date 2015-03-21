@@ -1,28 +1,51 @@
 package application;
 	
+import java.io.File;
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 public class Main extends Application {
 	
+	private Stage stage;
+	
 	@Override
+	public void start(Stage primaryStage) throws IOException {
 
-	public void start(Stage primaryStage) {
+		OAuthController oauth = new OAuthController(primaryStage);
+		
+		/*
+		Parent view = FXMLLoader.load(getClass().getResource("tweetOnly.fxml"));
+		Scene scene = new Scene(view);
+		primaryStage.setResizable(false);
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Yukitter");
+		primaryStage.show();
+		System.out.println("show");
+*/
+		
+//		OAuthController oauth = new OAuthController();
+
+//		MainController main = new MainController(oauth.getAccessToken());
+	}
+	
+	public void createYukitterStage() {
+		Parent view;
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetOnly.fxml"));
-			Parent view = loader.load();
-
+			view = FXMLLoader.load(getClass().getResource("tweetOnly.fxml"));
 			Scene scene = new Scene(view);
-			primaryStage.setScene(scene);
-			primaryStage.setTitle("Yukitter");
-			primaryStage.show();
-			MainController mainController = (MainController) loader.getController();
-			mainController.setStage(primaryStage);
-
-		} catch(Exception e) {
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.setTitle("Yukitter");
+			stage.show();
+			System.out.println("show");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -32,7 +55,8 @@ public class Main extends Application {
 	}
 	
 	@Override
-	public void stop() {
-		MainController.getTwitterStreamInstance().shutdown();
+	public void stop() throws Exception {
+		MainController.shutdownTwitterStream();
+		super.stop();
 	}
 }
