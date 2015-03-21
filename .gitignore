@@ -1,5 +1,5 @@
 *.DS_Store
 twitter4j.properties
 bin/
-.settings
+.settings/
 .project
