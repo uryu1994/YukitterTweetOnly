@@ -1,7 +1,5 @@
 *.DS_Store
 twitter4j.properties
 bin/
-.settings/
 .project
 .yukitter_setting
-src/serialize/OAuthConfiguration.java
