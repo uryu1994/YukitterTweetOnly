@@ -14,6 +14,8 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	public void onStatus(Status status) {
 		super.onStatus(status);
 		
+		MainController.getInstance().addStatus(status);
+		
 		//--- if mention come ---//
 		if(screenName.equals(status.getInReplyToScreenName())) {
 			System.out.println("Reply!!!!");

@@ -3,12 +3,17 @@ package application;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -20,6 +25,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
+import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -32,31 +39,37 @@ public class MainController {
 	private static MainController instance;
 	private static TwitterStream twitterStream;
 	private static Twitter twitter;
-	
+	private ObservableList<Status> timelineList;
 	public static ArrayList<Stage> list = new ArrayList<Stage>();
 	private Stage stage;
 	private Long inReplyToStatusId;
 	
 	@FXML
 	private Label textCounter;
-	
 	// TextArea wrote tweet text
 	@FXML
 	private TextArea tweetText;
 	@FXML
 	private MenuItem menuTweet;
+	@FXML
+	private MenuItem menuTimeline;
+	@FXML
+	private MenuItem menuTweetPane;
 	// User Name
 	@FXML
-	private Label name;
+	private Label userName;
 	// TwitterID
 	@FXML
-	private Label screenId;
+	private Label screenName;
 	// twitter icon
 	@FXML
 	private ImageView icon;
 	// ツイートボタン
 	@FXML
 	private Button tweetButton;
+	@FXML
+	public ListView<Status> timeline;
+	
 
 	public MainController (OAuthAuthorization oauth){
 		try {
@@ -69,10 +82,14 @@ public class MainController {
 			stage.setResizable(false);
 			stage.setScene(scene);
 			stage.setTitle("Yukitter");
+			stage.setWidth(72);
+			stage.setHeight(95);
 			
 			//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
 			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
-			
+			menuTimeline.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
+			menuTweetPane.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
+
 			stage.show();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -81,15 +98,26 @@ public class MainController {
 		
 		// --- ユーザー情報を取得して表示 ---//
 		try {
-			
 			twitter = new TwitterFactory().getInstance(oauth);
-			name.setText(twitter.verifyCredentials().getName());
-			screenId.setText("@"+ twitter.getScreenName());
+			userName.setText(twitter.verifyCredentials().getName());
+			screenName.setText("@"+ twitter.getScreenName());
 			Image image = new Image(twitter.verifyCredentials().getBiggerProfileImageURL());
 			icon.setImage(image);
+			icon.requestFocus();
 		} catch (IllegalStateException | TwitterException e) {
 			e.printStackTrace();
 		}
+		
+		//--- タイムラインを表示するための設定 ---//
+		timelineList = FXCollections.observableArrayList();
+		timeline.setCellFactory(new Callback<ListView<Status>, ListCell<Status>>() {
+			@Override
+			public ListCell<Status> call(ListView<Status> listView) {
+				return new TweetChipController();
+			}
+		});
+		timeline.setItems(timelineList);
+		
 		
 		// --- ツイッターストリームのインスタンス取得 ---//
 		twitterStream = new TwitterStreamFactory().getInstance(oauth);
@@ -123,12 +151,36 @@ public class MainController {
 			inReplyToStatusId = null;
 			System.out.println("-->> Tweet:" + txt);
 		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
-			System.out.println("TWITTER EXCEPTION");
 			e.printStackTrace();
 		}
 	}
 
+	public void evolveTweetPane(ActionEvent e) {
+		if(stage.getWidth() == 72) {
+			stage.setWidth(275);
+			stage.setHeight(95);
+			tweetText.requestFocus();
+		} else {
+			stage.setWidth(72);
+			stage.setHeight(95);
+			icon.requestFocus();
+		}
+		tweetText.clear();
+	}
+	
+	public void evolveTimelinePane(ActionEvent e) {
+		if(stage.getHeight() == 95 ) {
+			stage.setWidth(275);
+			stage.setHeight(358);
+			timeline.requestFocus();
+		} else {
+			stage.setWidth(72);
+			stage.setHeight(95);
+			icon.requestFocus();
+		}
+		tweetText.clear();
+	}
+	
 	public void checkTextCount (KeyEvent e) {
 		int count = 140 - tweetText.getText().length();
 		textCounter.setText(String.valueOf(count));
@@ -163,6 +215,13 @@ public class MainController {
 		}
 	}
 	
+	public void addStatus(Status status) {
+		Platform.runLater( () -> {
+			timelineList.add(0, status);
+		});
+
+	}
+	
 	public static MainController getInstance() {
 		return instance;
 	}
@@ -171,10 +230,8 @@ public class MainController {
 		try {
 			return twitter.getScreenName();
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "";
