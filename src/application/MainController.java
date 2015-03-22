@@ -31,10 +31,11 @@ import twitter4j.auth.OAuthAuthorization;
 public class MainController {
 	private static MainController instance;
 	private static TwitterStream twitterStream;
-	public ArrayList<Stage> list = new ArrayList<Stage>();
+	private static Twitter twitter;
+	
+	public static ArrayList<Stage> list = new ArrayList<Stage>();
 	private Stage stage;
 	private Long inReplyToStatusId;
-	private Twitter twitter;
 	
 	@FXML
 	private Label textCounter;
@@ -164,5 +165,18 @@ public class MainController {
 	
 	public static MainController getInstance() {
 		return instance;
+	}
+	
+	public static String getScreenName() {
+		try {
+			return twitter.getScreenName();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
 	}
 }

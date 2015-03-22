@@ -8,12 +8,13 @@ import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
 public class MyUserStreamAdapter extends UserStreamAdapter {
+	private String screenName = MainController.getScreenName();
 	@Override
 	public void onStatus(Status status) {
 		super.onStatus(status);
 		
 		//--- if mention come ---//
-		if("Guru_Yuki_mew".equals(status.getInReplyToScreenName())) {
+		if(screenName.equals(status.getInReplyToScreenName())) {
 			System.out.println("Reply!!!!");
 			Platform.runLater( () -> {
 				DialogManager.getInstance().createDialog(status);
