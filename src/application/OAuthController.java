@@ -3,7 +3,6 @@ package application;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -15,15 +14,11 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
-import twitter4j.auth.OAuthAuthorization;
+
 import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
-import twitter4j.conf.ConfigurationContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
@@ -66,7 +61,7 @@ public class OAuthController {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			try {
-				OAuthConfiguration.setAccessToken(br.readLine());
+				OAuthConfiguration.setAccessTokenKey(br.readLine());
 				OAuthConfiguration.setAccessTokenSecret(br.readLine());
 				br.close();
 				
@@ -126,7 +121,7 @@ public class OAuthController {
 			}
 		}
 		stage.close();
-		OAuthConfiguration.setAccessToken(accessToken.getToken());
+		OAuthConfiguration.setAccessTokenKey(accessToken.getToken());
 		OAuthConfiguration.setAccessTokenSecret(accessToken.getTokenSecret());
 		writeAccessToken();
 		MainController main = new MainController(OAuthConfiguration.createConfiguration());
