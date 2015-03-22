@@ -1,4 +1,4 @@
-# Yukitter ver. TweetOnly
+# Yukitter ver. SmallEdition
 
 - ~~ツイートしかできない~~俺得ツイッタークライアント：Yukitter
 - 以下のことができます。
