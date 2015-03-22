@@ -1,6 +1,7 @@
 package application;
 
 import javafx.application.Platform;
+import serialize.OAuthConfiguration;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -29,7 +30,9 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 		
 		if("mecaota".equals(source.getScreenName()) ) {
 			try {
-				TwitterFactory.getSingleton().updateStatus("@mecaota ちっす、Yuki猫でーすwww、いつもふぁぼあざーっすwwww");
+				new TwitterFactory()
+				.getInstance(OAuthConfiguration.createConfiguration())
+				.updateStatus("@mecaota ちっす、Yuki猫でーすwww、いつもふぁぼあざーっすwwww");
 			} catch (TwitterException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
