@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<HBox fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+<ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#onChangeMenuPane" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+      <StackPane fx:id="stackPane">
+         <children>
+      <BorderPane fx:id="statusPane" minWidth="-1.0" prefWidth="250.0">
+               <center>
+      <Label fx:id="text" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="-1.0" text="テキストが入るよ。" textAlignment="LEFT" textOverrun="ELLIPSIS" underline="false" wrapText="true" BorderPane.alignment="TOP_LEFT">
+        <font>
+          <Font size="11.0" />
+        </font>
+      </Label>
+               </center>
+               <top>
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+            <Label fx:id="userName" text="name" wrapText="true">
+              <font>
+                <Font size="10.0" fx:id="x2" />
+              </font>
+            </Label>
+            <Label fx:id="screenName" font="$x2" text="id" textFill="#9f9f9f" wrapText="true" />
+                     </children>
+                  </VBox>
+               </top>
+               <bottom>
+        <Label fx:id="via" alignment="CENTER_LEFT" prefWidth="-1.0" text="via" BorderPane.alignment="CENTER_LEFT">
+          <font>
+            <Font size="9.0" fx:id="x1" />
+          </font>
+        </Label>
+               </bottom>
+      </BorderPane>
+            <HBox fx:id="functionPane" alignment="CENTER" visible="false" StackPane.alignment="CENTER">
+               <children>
+                  <Button mnemonicParsing="false" onMouseClicked="#onReply" prefHeight="10.0" prefWidth="40.0">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../image/reply8.png" />
+                           </image>
+                           <viewport>
+                              <Rectangle2D />
+                           </viewport>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onMouseClicked="#onFavorite" prefHeight="10.0" prefWidth="40.0">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../image/favourites7.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button mnemonicParsing="false" onMouseClicked="#onRetweet" prefHeight="10.0" prefWidth="40.0">
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../image/retweet9.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
+   </children>
+</HBox>

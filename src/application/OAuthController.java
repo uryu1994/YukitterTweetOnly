@@ -14,7 +14,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
-
 import twitter4j.auth.RequestToken;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,7 +47,6 @@ public class OAuthController {
 		this.file = new File(".yukitter_setting");
 		this.owner = owner;
 		DeserializationOAuthConfiguration();
-		System.out.println(consumer);
 		
 		if(file.exists()) {
 			loadAccessToken();	
@@ -64,7 +62,9 @@ public class OAuthController {
 				OAuthConfiguration.setAccessTokenKey(br.readLine());
 				OAuthConfiguration.setAccessTokenSecret(br.readLine());
 				br.close();
+				System.out.println(consumer);
 				
+				@SuppressWarnings("unused")
 				MainController main = new MainController(OAuthConfiguration.createConfiguration());
 
 			} catch (IOException e) {
@@ -123,7 +123,10 @@ public class OAuthController {
 		stage.close();
 		OAuthConfiguration.setAccessTokenKey(accessToken.getToken());
 		OAuthConfiguration.setAccessTokenSecret(accessToken.getTokenSecret());
+		System.out.println(consumer);
 		writeAccessToken();
+		
+		@SuppressWarnings("unused")
 		MainController main = new MainController(OAuthConfiguration.createConfiguration());
 	}
 	

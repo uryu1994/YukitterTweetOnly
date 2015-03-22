@@ -1,18 +1,13 @@
 package application;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.Status;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class DialogManager {
 	private static DialogManager instance;
@@ -22,34 +17,19 @@ public class DialogManager {
 		dialogs  = new ArrayList<ReplyDialogController>(); 
 	}
 	
-	public void createDialog(Status status) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("replyDialog.fxml"));
-		try {
-			loader.load();
-			Parent root = loader.getRoot();
-			ReplyDialogController controller = loader.getController();
-
-			Scene scene = new Scene(root);
-			Stage dialog = new Stage(StageStyle.TRANSPARENT);
-			dialog.setScene(scene);
-			dialog.setResizable(false);
-			
-			controller.setStatus(status);
-			controller.setUserName(status.getUser().getName());
-			controller.setText(status.getText());
-			Image image = new Image(status.getUser().getBiggerProfileImageURL());
-			controller.setIcon(image);
-
-			controller.setNum(dialogs.size());
-			controller.setStage(dialog);
-			
-			dialogs.add(controller);
-			sound();
-			showDialogs();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void createDialog(Status status, String color) {
+		ReplyDialogController controller = new ReplyDialogController();
+		controller.setStatus(status);
+		controller.setUserName(status.getUser().getName());
+		controller.setText(status.getText());
+		Image image = new Image(status.getUser().getBiggerProfileImageURL());
+		controller.setIcon(image);
+		controller.setColor(color);
+		controller.setNum(dialogs.size());
+		
+		dialogs.add(controller);
+		sound();
+		showDialogs();
 	}
 	
 	public void showDialogs() {
@@ -91,5 +71,11 @@ public class DialogManager {
 			instance = new DialogManager();
 		}
 		return instance;
+	}
+	
+	public static void shutdownDialogs() {
+		for(ReplyDialogController dialog : dialogs) {
+			dialog.getStage().close();
+		}
 	}
 }
