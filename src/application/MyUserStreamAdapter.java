@@ -9,7 +9,18 @@ import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
 public class MyUserStreamAdapter extends UserStreamAdapter {
-	private String screenName = MainController.getScreenName();
+	private static String screenName;
+	
+	public MyUserStreamAdapter () {
+		try {
+			screenName = MainController.getInstance().getTwitter().getScreenName();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void onStatus(Status status) {
 		super.onStatus(status);
@@ -20,14 +31,13 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 		if(screenName.equals(status.getInReplyToScreenName())) {
 			System.out.println("Reply!!!!");
 			Platform.runLater( () -> {
-				DialogManager.getInstance().createDialog(status);
+				DialogManager.getInstance().createDialog(status, "skyBlue");
 			});
 		}
 	}
 	
 	@Override
-	public void onFavorite(User source, User target, Status favoritedStatus)
-	{
+	public void onFavorite(User source, User target, Status favoritedStatus) {
 		super.onFavorite(source,target,favoritedStatus);
 		
 		if("mecaota".equals(source.getScreenName()) ) {
@@ -40,6 +50,9 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 				e.printStackTrace();
 			}
 		}
+		Platform.runLater( () -> {
+			DialogManager.getInstance().createDialog(favoritedStatus, "khaki");		
+		});
 		System.out.println(source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
 	}
 }

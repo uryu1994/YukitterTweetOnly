@@ -26,6 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -72,6 +73,10 @@ public class MainController {
 	
 
 	public MainController (OAuthAuthorization oauth){
+
+		//--- 自身のインスタンスを保持 ---//
+		instance = this;
+
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetOnly.fxml"));
 			loader.setController(this);
@@ -82,23 +87,33 @@ public class MainController {
 			stage.setResizable(false);
 			stage.setScene(scene);
 			stage.setTitle("Yukitter");
-			stage.setWidth(72);
 			stage.setHeight(95);
 			
 			//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
 			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
-			menuTimeline.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
-			menuTweetPane.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
+//			menuTimeline.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
+//			menuTweetPane.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
 
-			stage.show();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		//--- タイムラインを表示するための設定 ---//
+		timelineList = FXCollections.observableArrayList();
+
+		timeline.setCellFactory(new Callback<ListView<Status>, ListCell<Status>>() {
+			@Override
+			public ListCell<Status> call(ListView<Status> listView) {
+				return new TweetChipController();
+			}
+		});
+		timeline.setItems(timelineList);
+		
 		// --- ユーザー情報を取得して表示 ---//
 		try {
 			twitter = new TwitterFactory().getInstance(oauth);
+			timelineList.addAll(twitter.getHomeTimeline());
 			userName.setText(twitter.verifyCredentials().getName());
 			screenName.setText("@"+ twitter.getScreenName());
 			Image image = new Image(twitter.verifyCredentials().getBiggerProfileImageURL());
@@ -108,27 +123,15 @@ public class MainController {
 			e.printStackTrace();
 		}
 		
-		//--- タイムラインを表示するための設定 ---//
-		timelineList = FXCollections.observableArrayList();
-		timeline.setCellFactory(new Callback<ListView<Status>, ListCell<Status>>() {
-			@Override
-			public ListCell<Status> call(ListView<Status> listView) {
-				return new TweetChipController();
-			}
-		});
-		timeline.setItems(timelineList);
-		
-		
 		// --- ツイッターストリームのインスタンス取得 ---//
 		twitterStream = new TwitterStreamFactory().getInstance(oauth);
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
-	
-		//--- 自身のインスタンスを保持 ---//
-		instance = this;
 		
 		//--- リプライ通知のダイアログを管理するマネージャーを起動 ---//
 		DialogManager.getInstance();
+		
+		stage.show();
 	}
 
 	// --- 本文をツイートするボタンの処理 ---//
@@ -167,18 +170,18 @@ public class MainController {
 		}
 		tweetText.clear();
 	}
-	
-	public void evolveTimelinePane(ActionEvent e) {
+
+	public void evolveTimelinePane(MouseEvent e) {
 		if(stage.getHeight() == 95 ) {
-			stage.setWidth(275);
-			stage.setHeight(358);
+//			stage.setWidth(275);
+			stage.setHeight(360);
 			timeline.requestFocus();
 		} else {
-			stage.setWidth(72);
+//			stage.setWidth(72);
 			stage.setHeight(95);
 			icon.requestFocus();
 		}
-		tweetText.clear();
+//		tweetText.clear();
 	}
 	
 	public void checkTextCount (KeyEvent e) {
@@ -188,6 +191,10 @@ public class MainController {
 			textCounter.setStyle("-fx-text-fill: red;");
 		} else {
 			textCounter.setStyle("-fx-text-fill: black;");
+		}
+		
+		if(tweetText.getText().length() == 0) {
+			inReplyToStatusId = null;
 		}
 	}
 	
@@ -226,14 +233,17 @@ public class MainController {
 		return instance;
 	}
 	
-	public static String getScreenName() {
-		try {
-			return twitter.getScreenName();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
-		return "";
+	public void addStatuses(ResponseList<Status> list){
+		Platform.runLater(() -> {
+			try {
+				timelineList.addAll(list);
+			} catch (Exception ex){
+				ex.printStackTrace();
+			}
+		});
+	}
+	
+	public Twitter getTwitter() {
+		return twitter;
 	}
 }

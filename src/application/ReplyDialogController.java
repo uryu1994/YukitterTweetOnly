@@ -1,37 +1,50 @@
 package application;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.io.IOException;
 
 import twitter4j.Status;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-public class ReplyDialogController implements Initializable {
+public class ReplyDialogController {
 	
 	private int num;
-	
 	private Status status;
-	
 	private Stage stage;
 	
 	@FXML
 	private Label name;
-
 	@FXML
 	private Label text;
-	
 	@FXML
 	private ImageView icon; 
+	@FXML
+	private AnchorPane notificationPane;
 	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		
+	public ReplyDialogController() {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("replyDialog.fxml"));
+		loader.setController(this);
+
+		try {
+			Scene scene = new Scene(loader.load());
+			Stage dialog = new Stage(StageStyle.TRANSPARENT);
+			dialog.setScene(scene);
+			dialog.setResizable(false);
+			
+			this.stage = dialog;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setNum(int n) {
@@ -78,5 +91,9 @@ public class ReplyDialogController implements Initializable {
 	
 	public void onCloseDialog(MouseEvent e) {
 		DialogManager.getInstance().hideDialog(num);
+	}
+	
+	public void setColor(String color) {
+		notificationPane.setStyle("-fx-background-color: " + color + ";");
 	}
 }
