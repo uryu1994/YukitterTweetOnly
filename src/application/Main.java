@@ -3,8 +3,6 @@ package application;
 import java.io.IOException;
 
 import twitterUtil.TwitterUtil;
-import manager.DialogManager;
-import controller.MainController;
 import controller.OAuthController;
 import javafx.application.Application;
 import javafx.stage.Stage;

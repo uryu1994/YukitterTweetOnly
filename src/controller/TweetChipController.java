@@ -131,6 +131,7 @@ public class TweetChipController extends ListCell<Status>{
 	
 	public void onRetweet(MouseEvent e) throws TwitterException {
 			TwitterUtil.getTwitter().retweetStatus(status.getId());
+			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
 		System.out.println("onRetweet button pushed !!");
 	}
 }

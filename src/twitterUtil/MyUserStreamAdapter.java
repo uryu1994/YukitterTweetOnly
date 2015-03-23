@@ -30,6 +30,65 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	}
 
 	/**
+	 * ツイートを受信した時に呼び出される
+	 * 
+	 * @param status ツイートの情報
+	 */
+	@Override
+	public void onStatus(Status status) {
+		super.onStatus(status);
+		
+		MainController.getInstance().addStatus(status);
+		
+		//--- if mention come ---//
+		if(screenName.equals(status.getInReplyToScreenName())) {
+			Platform.runLater( () -> {
+				DialogManager.getSingleton().createDialog(status, "skyBlue");
+			});
+		}
+		
+		if(status.isRetweet()) {
+			if(screenName.equals(status.getRetweetedStatus().getUser().getScreenName())) {
+				Platform.runLater( () -> {
+					DialogManager.getSingleton().createDialog(status, "palegreen");
+				});
+			}
+		}
+	}
+	
+	/**
+	 * ツイートをお気に入りされた時に呼び出される
+	 * 
+	 * @param source ツイートをお気に入りしたユーザー
+	 * @param target ツイートをお気に入りされたユーザー
+	 * @param favoriteStatus お気に入りされたツイート
+	 */
+	@Override
+	public void onFavorite(User source, User target, Status favoritedStatus) {
+		super.onFavorite(source,target,favoritedStatus);
+
+		Platform.runLater( () -> {
+			DialogManager.getSingleton().createDialog(favoritedStatus, "khaki");
+			
+		});
+		
+		autoMecaotaReply(source);
+		System.out.println(source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
+	}
+	
+	/**
+	 * ツイートのお気に入りを解除された時に呼び出される
+	 * 
+	 * @param source ツイートのお気に入りを解除したユーザー
+	 * @param target ツイートのお気に入りを解除されたユーザー
+	 * @param favoriteStatus お気に入りを解除されたツイート
+	 */
+	@Override
+	public void onUnfavorite(User source, User target, Status unfavoritedStatus) {
+		
+	}
+	
+	/**
 	 * ユーザをブロックした時に呼び出される
 	 * 
 	 * @param source ブロックしたユーザー：自分
@@ -167,65 +226,6 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	 */
 	@Override
 	public void onUserProfileUpdate(User updatedUser) {
-		
-	}
-	
-	/**
-	 * ツイートを受信した時に呼び出される
-	 * 
-	 * @param status ツイートの情報
-	 */
-	@Override
-	public void onStatus(Status status) {
-		super.onStatus(status);
-		
-		MainController.getInstance().addStatus(status);
-		
-		//--- if mention come ---//
-		if(screenName.equals(status.getInReplyToScreenName())) {
-			Platform.runLater( () -> {
-				DialogManager.getSingleton().createDialog(status, "skyBlue");
-			});
-		}
-		
-		if(status.isRetweet()) {
-			if(screenName.equals(status.getRetweetedStatus().getUser().getScreenName())) {
-				Platform.runLater( () -> {
-					DialogManager.getSingleton().createDialog(status, "palegreen");
-				});
-			}
-		}
-	}
-	
-	/**
-	 * ツイートをお気に入りされた時に呼び出される
-	 * 
-	 * @param source ツイートをお気に入りしたユーザー
-	 * @param target ツイートをお気に入りされたユーザー
-	 * @param favoriteStatus お気に入りされたツイート
-	 */
-	@Override
-	public void onFavorite(User source, User target, Status favoritedStatus) {
-		super.onFavorite(source,target,favoritedStatus);
-
-		Platform.runLater( () -> {
-			DialogManager.getSingleton().createDialog(favoritedStatus, "khaki");
-			
-		});
-		
-		autoMecaotaReply(source);
-		System.out.println(source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
-	}
-	
-	/**
-	 * ツイートのお気に入りを解除された時に呼び出される
-	 * 
-	 * @param source ツイートのお気に入りを解除したユーザー
-	 * @param target ツイートのお気に入りを解除されたユーザー
-	 * @param favoriteStatus お気に入りを解除されたツイート
-	 */
-	@Override
-	public void onUnfavorite(User source, User target, Status unfavoritedStatus) {
 		
 	}
 	
