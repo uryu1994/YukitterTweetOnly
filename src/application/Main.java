@@ -20,8 +20,9 @@ public class Main extends Application {
 	
 	@Override
 	public void stop() throws Exception {
-		DialogManager.shutdownDialogs();
+		DialogManager.getSingleton().shutdownAllDialogs();
 		MainController.shutdownTwitterStream();
 		super.stop();
+		System.out.println("Shutdown Yukitter");
 	}
 }

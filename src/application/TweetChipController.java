@@ -14,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 
 public class TweetChipController extends ListCell<Status>{
 	
@@ -36,6 +35,12 @@ public class TweetChipController extends ListCell<Status>{
 	private BorderPane statusPane;
 	@FXML
 	private HBox functionPane;
+	@FXML
+	private ImageView replyImage;
+	@FXML
+	private ImageView favoriteImage;	
+	@FXML
+	private ImageView retweetImage;
 	
 	private final Pattern pattern = Pattern.compile("<a href=\"(.*)\" rel=\".*\">(.*)</a>");
 	
@@ -61,9 +66,11 @@ public class TweetChipController extends ListCell<Status>{
 		
 		userName.setText(status.getUser().getName());
 		screenName.setText("@"+ status.getUser().getScreenName());
-		icon.setImage(ImageManager.getImage(status.getUser()));
+		icon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
 		text.setText(status.getText());
-		
+		replyImage.setImage(ImageManager.getSingleton().getImage("reply"));
+		favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
+		retweetImage.setImage(ImageManager.getSingleton().getImage("retweet"));
 		Matcher matcher = pattern.matcher(status.getSource());
 
 		if(matcher.find()) {
@@ -95,7 +102,13 @@ public class TweetChipController extends ListCell<Status>{
 	}
 	
 	public void onFavorite(MouseEvent e) throws TwitterException {
-		MainController.getInstance().getTwitter().createFavorite(status.getId());
+		if(status.isFavorited()) {
+			MainController.getInstance().getTwitter().destroyFavorite(status.getId());
+			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
+		} else {
+			MainController.getInstance().getTwitter().createFavorite(status.getId());
+			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorited"));
+		}
 		System.out.println("onFavorite button pushed !!");
 	}
 	

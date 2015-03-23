@@ -3,6 +3,7 @@ package application;
 import java.io.IOException;
 
 import twitter4j.Status;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -36,11 +36,9 @@ public class ReplyDialogController {
 
 		try {
 			Scene scene = new Scene(loader.load());
-			Stage dialog = new Stage(StageStyle.TRANSPARENT);
-			dialog.setScene(scene);
-			dialog.setResizable(false);
-			
-			this.stage = dialog;
+			stage = new Stage(StageStyle.TRANSPARENT);
+			stage.setScene(scene);
+			stage.setResizable(false);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -78,7 +76,7 @@ public class ReplyDialogController {
 	public void onReply(MouseEvent e) {
 		System.out.println("@"+status.getUser().getScreenName()+" ");
 		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
-		DialogManager.getInstance().hideDialog(num);
+		DialogManager.getSingleton().hideDialog(num);
 	}
 	
 	public Long getInRwplyToStatusId() {
@@ -90,10 +88,37 @@ public class ReplyDialogController {
 	}
 	
 	public void onCloseDialog(MouseEvent e) {
-		DialogManager.getInstance().hideDialog(num);
+		DialogManager.getSingleton().hideDialog(num);
 	}
 	
 	public void setColor(String color) {
 		notificationPane.setStyle("-fx-background-color: " + color + ";");
+	}
+	
+	public void startTimeLagDeleteThread() {
+		TimeLagDelete timeLagDelete = new TimeLagDelete();
+		timeLagDelete.run();
+	}
+	
+	class TimeLagDelete implements Runnable {
+		private int time = 0;
+		@Override
+		public void run() {
+			Platform.runLater( () -> {
+				System.out.println("CountStart");
+				while(time<200000) {
+					time++;
+					if(time%5000 == 0) {
+						System.out.println("Now [[ "+ time + " ]] Counted.");		
+					}
+				}
+				/*
+				if(stage.isShowing()) {
+					System.out.println("stage close !!");
+					DialogManager.getSingleton().hideDialog(num);
+				}
+				*/
+			});
+		}
 	}
 }

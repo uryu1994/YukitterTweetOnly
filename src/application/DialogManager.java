@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.Status;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -26,10 +27,14 @@ public class DialogManager {
 		controller.setIcon(image);
 		controller.setColor(color);
 		controller.setNum(dialogs.size());
-		
+
 		dialogs.add(controller);
 		sound();
 		showDialogs();
+		
+		if(!"skyBlue".equals(color)) {
+			controller.startTimeLagDeleteThread();
+		}
 	}
 	
 	public void showDialogs() {
@@ -39,6 +44,7 @@ public class DialogManager {
 			dialog.setY(50 + 90*i);
 			dialog.show();
 		}
+		System.out.println("SHOW NOTIFICATION DIALOGS !!");
 		System.out.println(dialogs);
 	}
 	
@@ -47,8 +53,7 @@ public class DialogManager {
 	}
 	
 	public void hideDialog(int num) {
-		System.out.println("DELETE:num="+num+" are deleted.");
-		dialogs.get(num).getStage().hide();
+		dialogs.get(num).getStage().close();;
 		dialogs.remove(num);
 		reNumbering(num);
 		showDialogs();
@@ -66,16 +71,17 @@ public class DialogManager {
 	    mediaPlayer.play();
 	}
 	
-	public static DialogManager getInstance() {
+	public static DialogManager getSingleton() {
 		if(instance == null) {
 			instance = new DialogManager();
 		}
+		
 		return instance;
 	}
 	
-	public static void shutdownDialogs() {
-		for(ReplyDialogController dialog : dialogs) {
-			dialog.getStage().close();
+	public void shutdownAllDialogs() {
+		for(int i=0; i<dialogs.size(); i++) {
+			hideDialog(i);
 		}
 	}
 }

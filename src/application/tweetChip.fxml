@@ -46,10 +46,7 @@
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#onReply" prefHeight="10.0" prefWidth="40.0">
                      <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../image/reply8.png" />
-                           </image>
+                        <ImageView fx:id="replyImage" fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <viewport>
                               <Rectangle2D />
                            </viewport>
@@ -61,11 +58,7 @@
                         <Insets left="5.0" />
                      </HBox.margin>
                      <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../image/favourites7.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fx:id="favoriteImage" fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
                   <Button mnemonicParsing="false" onMouseClicked="#onRetweet" prefHeight="10.0" prefWidth="40.0">
@@ -73,11 +66,7 @@
                         <Insets left="5.0" />
                      </HBox.margin>
                      <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../image/retweet9.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fx:id="retweetImage" fitHeight="16.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
                      </graphic>
                   </Button>
                </children>

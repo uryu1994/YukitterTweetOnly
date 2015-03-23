@@ -31,8 +31,16 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 		if(screenName.equals(status.getInReplyToScreenName())) {
 			System.out.println("Reply!!!!");
 			Platform.runLater( () -> {
-				DialogManager.getInstance().createDialog(status, "skyBlue");
+				DialogManager.getSingleton().createDialog(status, "skyBlue");
 			});
+		}
+		
+		if(status.isRetweet()) {
+			if(screenName.equals(status.getRetweetedStatus().getUser().getScreenName())) {
+				Platform.runLater( () -> {
+					DialogManager.getSingleton().createDialog(status, "palegreen");
+				});
+			}
 		}
 	}
 	
@@ -51,7 +59,7 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 			}
 		}
 		Platform.runLater( () -> {
-			DialogManager.getInstance().createDialog(favoritedStatus, "khaki");		
+			DialogManager.getSingleton().createDialog(favoritedStatus, "khaki");		
 		});
 		System.out.println(source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
 	}

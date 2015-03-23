@@ -129,7 +129,7 @@ public class MainController {
 		twitterStream.user();
 		
 		//--- リプライ通知のダイアログを管理するマネージャーを起動 ---//
-		DialogManager.getInstance();
+//		DialogManager.getSingleton();
 		
 		stage.show();
 	}
