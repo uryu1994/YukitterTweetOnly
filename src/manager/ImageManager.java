@@ -1,4 +1,4 @@
-package application;
+package manager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,6 @@ public class ImageManager {
 		Image replyImage = new Image("image/reply.png");
 		Image favoriteImage = new Image("image/favorite.png");
 		Image favoritedImage = new Image("image/favorited.png");
-
 		Image retweetImage = new Image("image/retweet.png");
 		Image retweetedImage = new Image("image/retweeted.png");
 		

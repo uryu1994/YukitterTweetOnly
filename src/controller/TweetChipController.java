@@ -1,11 +1,13 @@
-package application;
+package controller;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import manager.ImageManager;
 import twitter4j.Status;
 import twitter4j.TwitterException;
+import twitterUtil.TwitterUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -17,8 +19,11 @@ import javafx.scene.layout.HBox;
 
 public class TweetChipController extends ListCell<Status>{
 	
+	//-- ツイートのStatus --//
 	private Status status;
-	
+	//-- viaを抜き出すためのPattern定義 --//
+	private final Pattern pattern = Pattern.compile("<a href=\"(.*)\" rel=\".*\">(.*)</a>");
+
 	@FXML
 	private HBox container;
 	@FXML
@@ -42,10 +47,12 @@ public class TweetChipController extends ListCell<Status>{
 	@FXML
 	private ImageView retweetImage;
 	
-	private final Pattern pattern = Pattern.compile("<a href=\"(.*)\" rel=\".*\">(.*)</a>");
-	
+	/**
+	 * TweetChipControllerのコンストラクタ
+	 * 
+	 */
 	public TweetChipController () {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("tweetChip.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/tweetChip.fxml"));
 		fxmlLoader.setController(this);
 		
 		try {
@@ -55,6 +62,11 @@ public class TweetChipController extends ListCell<Status>{
 		} 
 	}
 	
+	/**
+	 * 新着ツイートがあった時の追加処理
+	 * @param status 
+	 * @param empty 中身が空かどうかを確かめる
+	 */
 	@Override
 	protected void updateItem(Status status, boolean empty) {
 		super.updateItem(status, empty);
@@ -107,10 +119,10 @@ public class TweetChipController extends ListCell<Status>{
 	
 	public void onFavorite(MouseEvent e) throws TwitterException {
 		if(status.isFavorited()) {
-			MainController.getInstance().getTwitter().destroyFavorite(status.getId());
+			TwitterUtil.getTwitter().destroyFavorite(status.getId());
 			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
 		} else {
-			MainController.getInstance().getTwitter().createFavorite(status.getId());
+			TwitterUtil.getTwitter().createFavorite(status.getId());
 			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorited"));
 		}
 		
@@ -118,7 +130,7 @@ public class TweetChipController extends ListCell<Status>{
 	}
 	
 	public void onRetweet(MouseEvent e) throws TwitterException {
-			MainController.getInstance().getTwitter().retweetStatus(status.getId());
+			TwitterUtil.getTwitter().retweetStatus(status.getId());
 		System.out.println("onRetweet button pushed !!");
 	}
 }

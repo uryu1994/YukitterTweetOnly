@@ -1,5 +1,7 @@
-package application;
+package twitterUtil;
 
+import manager.DialogManager;
+import controller.MainController;
 import javafx.application.Platform;
 import serialize.OAuthConfiguration;
 import twitter4j.DirectMessage;
@@ -19,7 +21,7 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	 */
 	public MyUserStreamAdapter () {
 		try {
-			screenName = MainController.getInstance().getTwitter().getScreenName();
+			screenName = TwitterUtil.getTwitter().getScreenName();
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (TwitterException e) {
