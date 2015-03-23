@@ -1,7 +1,6 @@
 package application;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -41,31 +40,22 @@ public class MainController {
 	private static TwitterStream twitterStream;
 	private static Twitter twitter;
 	private ObservableList<Status> timelineList;
-	public static ArrayList<Stage> list = new ArrayList<Stage>();
 	private Stage stage;
 	private Long inReplyToStatusId;
 	
 	@FXML
 	private Label textCounter;
-	// TextArea wrote tweet text
 	@FXML
 	private TextArea tweetText;
 	@FXML
 	private MenuItem menuTweet;
 	@FXML
-	private MenuItem menuTimeline;
-	@FXML
-	private MenuItem menuTweetPane;
-	// User Name
-	@FXML
 	private Label userName;
-	// TwitterID
 	@FXML
 	private Label screenName;
-	// twitter icon
 	@FXML
 	private ImageView icon;
-	// ツイートボタン
+
 	@FXML
 	private Button tweetButton;
 	@FXML
@@ -91,9 +81,7 @@ public class MainController {
 			
 			//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
 			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
-//			menuTimeline.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
-//			menuTweetPane.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
-
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,10 +115,7 @@ public class MainController {
 		twitterStream = new TwitterStreamFactory().getInstance(oauth);
 		twitterStream.addListener(new MyUserStreamAdapter());
 		twitterStream.user();
-		
-		//--- リプライ通知のダイアログを管理するマネージャーを起動 ---//
-//		DialogManager.getSingleton();
-		
+			
 		stage.show();
 	}
 
@@ -158,30 +143,14 @@ public class MainController {
 		}
 	}
 
-	public void evolveTweetPane(ActionEvent e) {
-		if(stage.getWidth() == 72) {
-			stage.setWidth(275);
-			stage.setHeight(95);
-			tweetText.requestFocus();
-		} else {
-			stage.setWidth(72);
-			stage.setHeight(95);
-			icon.requestFocus();
-		}
-		tweetText.clear();
-	}
-
 	public void evolveTimelinePane(MouseEvent e) {
 		if(stage.getHeight() == 95 ) {
-//			stage.setWidth(275);
 			stage.setHeight(360);
 			timeline.requestFocus();
 		} else {
-//			stage.setWidth(72);
 			stage.setHeight(95);
 			icon.requestFocus();
 		}
-//		tweetText.clear();
 	}
 	
 	public void checkTextCount (KeyEvent e) {
@@ -214,6 +183,7 @@ public class MainController {
 	public void setText(String s, Long inReplyToStatusId) {
 		this.inReplyToStatusId = inReplyToStatusId;
 		tweetText.setText(s);
+		tweetText.requestFocus();
 	}
 
 	public static void shutdownTwitterStream() {

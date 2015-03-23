@@ -96,6 +96,10 @@ public class TweetChipController extends ListCell<Status>{
 		}
 	}
 	
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
 	public void onReply(MouseEvent e) {
 		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
 		System.out.println("onReply button pushed !!");
@@ -109,6 +113,7 @@ public class TweetChipController extends ListCell<Status>{
 			MainController.getInstance().getTwitter().createFavorite(status.getId());
 			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorited"));
 		}
+		
 		System.out.println("onFavorite button pushed !!");
 	}
 	

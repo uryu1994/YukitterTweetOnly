@@ -1,6 +1,5 @@
 package application;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,15 +18,16 @@ public class ImageManager {
 		
 		Image replyImage = new Image("image/reply.png");
 		Image favoriteImage = new Image("image/favorite.png");
-		Image retweetImage = new Image("image/retweet.png");
 		Image favoritedImage = new Image("image/favorited.png");
-//		Image favoriteImage = new Image("image/favourites7.png");
-//		Image favoriteImage = new Image("image/favourites7.png");
+
+		Image retweetImage = new Image("image/retweet.png");
+		Image retweetedImage = new Image("image/retweeted.png");
 		
 		functionImage.put("reply", replyImage);
 		functionImage.put("favorite", favoriteImage);
-		functionImage.put("retweet", retweetImage);
 		functionImage.put("favorited", favoritedImage);
+		functionImage.put("retweet", retweetImage);
+		functionImage.put("retweeted", retweetedImage);
 	}
 	
 	public Image getImage(User user) {

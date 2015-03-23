@@ -1,10 +1,11 @@
 package application;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.Status;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -40,7 +41,10 @@ public class DialogManager {
 	public void showDialogs() {
 		for(int i=0; i<dialogs.size(); i++) {
 			Stage dialog = dialogs.get(i).getStage();
-			dialog.setX(1150);
+			
+			Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+
+			dialog.setX(d.getWidth() - 284);
 			dialog.setY(50 + 90*i);
 			dialog.show();
 		}
