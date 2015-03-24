@@ -1,4 +1,4 @@
-package controller;
+package application;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class AlertDialogController {
 	 * AlertDialogControllerのコンストラクタ
 	 */
 	public AlertDialogController(Status status, String color) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/AlertDialog.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("AlertDialog.fxml"));
 		loader.setController(this);
 
 		try {

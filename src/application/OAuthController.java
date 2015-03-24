@@ -1,4 +1,4 @@
-package controller;
+package application;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -89,7 +89,7 @@ public class OAuthController {
 	 * @param owner 親ステージのStageインスタンス
 	 */
 	private void showOAuthWindow(Stage owner) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/oAuthWindow.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("oAuthWindow.fxml"));
 		loader.setController(this);
 		
 		try {

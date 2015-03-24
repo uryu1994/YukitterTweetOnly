@@ -1,4 +1,4 @@
-package controller;
+package application;
 
 import java.io.IOException;
 
@@ -75,7 +75,7 @@ public class MainController {
 		instance = this;
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/tweetOnly.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("MainPanel.fxml"));
 			loader.setController(this);
 			loader.load();
 			
@@ -114,12 +114,11 @@ public class MainController {
 
 		//-- ユーザーのアイコンを表示 --//
 		icon.setImage(TwitterUtil.getIcon());
-		icon.requestFocus();			
-
+		icon.requestFocus();
 		//-- ウインドウを可視化 --//
 		stage.show();
 	}
-
+	
 	/**
 	 * Command+Enterのショートカットキーを押したときに呼び出される
 	 * 
@@ -138,7 +137,7 @@ public class MainController {
 		if(inReplyToStatusId != null) {
 			status.setInReplyToStatusId(inReplyToStatusId);
 		}
-		
+
 		try {
 			TwitterUtil.getTwitter().updateStatus(status);
 			tweetText.clear();
@@ -156,7 +155,7 @@ public class MainController {
 	 */
 	public void evolveTimelinePane(MouseEvent e) {
 		if(stage.getHeight() == 95 ) {
-			stage.setHeight(360);
+			stage.setHeight(375);
 			timeline.requestFocus();
 		} else {
 			stage.setHeight(95);
@@ -213,7 +212,7 @@ public class MainController {
 	}
 	
 	/**
-	 * タイムラインに新着ツイートを追加する
+	 * タイムラインリストに新着ツイートを追加する
 	 * 
 	 * @param status 新着ツイートのステータス
 	 */
@@ -224,7 +223,7 @@ public class MainController {
 	}
 	
 	/**
-	 * タイムラインに複数の新着ツイートを追加する
+	 * タイムラインリストに複数の新着ツイートを追加する
 	 * 
 	 * @param list 新着ツイート群
 	 */
@@ -236,6 +235,48 @@ public class MainController {
 				ex.printStackTrace();
 			}
 		});
+	}
+	
+	/**
+	 * タイムラインリストの中のステータスを更新する
+	 * 
+	 * synchronized
+	 * 主にリツイート/お気に入りした時に呼び出される
+	 * 
+	 * @param newStatus 情報が変更された新しいステータス
+	 */
+	public void updateStatus(Status newStatus) {
+		System.out.println("[debug]"+ newStatus);
+		synchronized(timelineList) {
+			for(Status oldStatus : timelineList) {
+				if(oldStatus.getId() == newStatus.getId()) {
+					int num = timelineList.indexOf(oldStatus);
+					timelineList.remove(num);
+					timelineList.add(num, newStatus);
+					System.out.println("[info] COMPLETED REPLACE STATUS");
+					return ;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * タイムラインリストの中のステータスを削除する
+	 * 
+	 * 以下の処理をする時に呼び出される
+	 *  - リツイートの解除
+	 *  @TODO: ツイートの削除
+	 */
+	public void deleteRetweetStatus(Status retweetedStatus) {
+		synchronized(timelineList) {
+			for(Status myRetweetStatus : timelineList) {
+				if(myRetweetStatus.getRetweetedStatus().getId() == retweetedStatus.getId()) {
+					int num = timelineList.indexOf(myRetweetStatus);
+					timelineList.remove(num);
+					System.out.println("[info] COMPLETED DELETE RETWEET STATUS");
+				}
+			}
+		}
 	}
 	
 	/**

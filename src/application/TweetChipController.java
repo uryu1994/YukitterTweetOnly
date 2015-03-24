@@ -1,4 +1,4 @@
-package controller;
+package application;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -52,7 +52,7 @@ public class TweetChipController extends ListCell<Status>{
 	 * 
 	 */
 	public TweetChipController () {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/tweetChip.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("tweetChip.fxml"));
 		fxmlLoader.setController(this);
 		
 		try {
@@ -81,8 +81,18 @@ public class TweetChipController extends ListCell<Status>{
 		icon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
 		text.setText(status.getText());
 		replyImage.setImage(ImageManager.getSingleton().getImage("reply"));
-		favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
-		retweetImage.setImage(ImageManager.getSingleton().getImage("retweet"));
+		
+		if(status.isFavorited()) {
+			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorited"));
+		} else {
+			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
+		}
+		if(status.isRetweeted()) {
+			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
+		} else {
+			retweetImage.setImage(ImageManager.getSingleton().getImage("retweet"));			
+		}
+		
 		Matcher matcher = pattern.matcher(status.getSource());
 
 		if(matcher.find()) {
@@ -94,44 +104,52 @@ public class TweetChipController extends ListCell<Status>{
 		setGraphic(container);
 	}
 	
-	public void onChangeMenuPane(MouseEvent e) {
-		System.out.println("onChangeMenuPane are Pushed !!");
-		
-		if(statusPane.isDisable()) {
-			statusPane.setDisable(false);
-			functionPane.setVisible(false);
-			System.out.println("show StatusPane");
-		} else {
-			statusPane.setDisable(true);
-			functionPane.setVisible(true);
-			System.out.println("show FunctionPane");
-		}
-	}
-	
 	public void setStatus(Status status) {
 		this.status = status;
 	}
 	
+	public void updateStatus(Status status) {
+		this.status = status;
+	}
+	
+	public void onChangeMenuPane(MouseEvent e) {
+		System.out.println("[debug] onChangeMenuPane is Called !!");
+		
+		if(statusPane.isDisable()) {
+			statusPane.setDisable(false);
+			functionPane.setVisible(false);
+			System.out.println("[info] show StatusPane");
+		} else {
+			statusPane.setDisable(true);
+			functionPane.setVisible(true);
+			System.out.println("[info] show FunctionPane");
+		}
+	}
+	
 	public void onReply(MouseEvent e) {
+		System.out.println("[debug] Reply button is Pushed !!");		
 		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
-		System.out.println("onReply button pushed !!");
 	}
 	
 	public void onFavorite(MouseEvent e) throws TwitterException {
+		System.out.println("[debug] Favorite button is Pushed !!");
 		if(status.isFavorited()) {
-			TwitterUtil.getTwitter().destroyFavorite(status.getId());
-			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
+			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().destroyFavorite(status.getId()));
+//			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorite"));
 		} else {
-			TwitterUtil.getTwitter().createFavorite(status.getId());
-			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorited"));
+			System.out.println("お気に入り前のステータス = [[ " + status.getId() + " ]]");
+			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().createFavorite(status.getId()));
+//			favoriteImage.setImage(ImageManager.getSingleton().getImage("favorited"));
 		}
-		
-		System.out.println("onFavorite button pushed !!");
 	}
 	
 	public void onRetweet(MouseEvent e) throws TwitterException {
-			TwitterUtil.getTwitter().retweetStatus(status.getId());
-			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
-		System.out.println("onRetweet button pushed !!");
+		System.out.println("[debug] Retweet button is Pushed !!");
+		if(status.isRetweeted()) {
+			MainController.getInstance().deleteRetweetStatus(status);
+//			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
+		} else {
+			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().retweetStatus(status.getId()));
+		}
 	}
 }

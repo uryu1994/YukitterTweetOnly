@@ -5,7 +5,7 @@ import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
-import controller.AlertDialogController;
+import application.AlertDialogController;
 import twitter4j.Status;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -14,15 +14,17 @@ import javafx.stage.Stage;
 public class DialogManager {
 	private static DialogManager instance;
 	private static List<AlertDialogController> dialogs;
+	private static Media sound;
 	
 	/**
 	 * DialogManagerのコンストラクタ
 	 * 
 	 */
 	private DialogManager() {
-		dialogs  = new ArrayList<AlertDialogController>(); 
+		dialogs  = new ArrayList<AlertDialogController>();
+		sound = new Media(getClass().getResource("sample.mp3").toExternalForm());
 	}
-	
+
 	/**
 	 * アラートダイアログを生成
 	 * 
@@ -93,7 +95,6 @@ public class DialogManager {
 	 * ダイアログ表示時に音を鳴らす
 	 */
 	private void sound() {
-	    Media sound = new Media(getClass().getResource("../sounds/sample.mp3").toExternalForm());
 	    MediaPlayer mediaPlayer = new MediaPlayer(sound);
 	    mediaPlayer.play();
 	}

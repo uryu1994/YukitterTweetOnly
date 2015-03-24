@@ -1,7 +1,7 @@
 package twitterUtil;
 
+import application.MainController;
 import manager.DialogManager;
-import controller.MainController;
 import javafx.application.Platform;
 import serialize.OAuthConfiguration;
 import twitter4j.DirectMessage;
@@ -47,7 +47,7 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 			});
 		}
 		
-		if(status.isRetweet()) {
+		if(status.isRetweeted()) {
 			if(screenName.equals(status.getRetweetedStatus().getUser().getScreenName())) {
 				Platform.runLater( () -> {
 					DialogManager.getSingleton().createDialog(status, "palegreen");
@@ -69,11 +69,12 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 
 		Platform.runLater( () -> {
 			DialogManager.getSingleton().createDialog(favoritedStatus, "khaki");
-			
 		});
-		
+
 		autoMecaotaReply(source);
-		System.out.println(source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
+		
+		System.out.println("[debug] お気に入り後のステータス = [[ " + favoritedStatus + " ]]");
+		System.out.println("[info]" + source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
 	}
 	
 	/**
@@ -85,7 +86,9 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	 */
 	@Override
 	public void onUnfavorite(User source, User target, Status unfavoritedStatus) {
+		super.onUnfavorite(source,target,unfavoritedStatus);
 		
+		System.out.println("[info]" + source.getName() + "が" + target.getName() + "のツイート「" + unfavoritedStatus.getText() + "」のふぁぼを解除した");
 	}
 	
 	/**
