@@ -147,9 +147,9 @@ public class TweetChipController extends ListCell<Status>{
 		System.out.println("[debug] Retweet button is Pushed !!");
 		if(status.isRetweeted()) {
 			MainController.getInstance().deleteRetweetStatus(status);
-//			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
 		} else {
 			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().retweetStatus(status.getId()));
+			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
 		}
 	}
 }
