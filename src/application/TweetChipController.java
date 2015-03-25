@@ -86,9 +86,9 @@ public class TweetChipController extends ListCell<Status>{
 		}
 		
 		System.out.println("[debug] _______ START UPDATE ITEM _______");
-//		retweetedStatus = status.getRetweetedStatus();
-//		if(retweetedStatus != null) {
-		if(status.getRetweetedStatus() == null) {
+		retweetedStatus = status.getRetweetedStatus();
+		if(retweetedStatus == null) {
+//		if(status.getRetweetedStatus() == null) {
 			userName.setText(status.getUser().getName());
 			screenName.setText("@"+ status.getUser().getScreenName());
 			icon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
@@ -97,17 +97,17 @@ public class TweetChipController extends ListCell<Status>{
 			retweetUserIcon.setVisible(false);
 			retweetUserName.setVisible(false);
 		} else {
-			userName.setText(status.getRetweetedStatus().getUser().getName());
-			screenName.setText("@"+ status.getRetweetedStatus().getUser().getScreenName());
-			icon.setImage(ImageManager.getSingleton().getImage(status.getRetweetedStatus().getUser()));
-			text.setText(status.getRetweetedStatus().getText());
+			userName.setText(retweetedStatus.getUser().getName());
+			screenName.setText("@"+ retweetedStatus.getUser().getScreenName());
+			icon.setImage(ImageManager.getSingleton().getImage(retweetedStatus.getUser()));
+			text.setText(retweetedStatus.getText());
 			
 			retweetUserIcon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
 			retweetUserName.setText("Retweeted by " + status.getUser().getName());
 			
 			retweetUserIcon.setVisible(true);
 			retweetUserName.setVisible(true);
-			System.out.println("こいつぁRetweetedStatusをもってるぜ！！");
+			System.out.println("[info] this Status has retweetedStatus.");
 		}
 		
 		System.out.println("[debug] added status is >> " + status);
