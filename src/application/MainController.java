@@ -40,6 +40,10 @@ public class MainController {
 	private Stage stage;
 	//--- リプライ元のツイートのStatusIDを保持 ---//
 	private Long inReplyToStatusId;
+	//-- タイムラインを閉じた時のウインドウの高さ --//
+	private final int MIN_WINDOW_HEIGHT = 100;
+	//-- タイムラインを展開した時のウインドウの高さ --//
+	private final int MAX_WINDOW_HEIGHT = 400;
 	
 	@FXML
 	private Label textCounter;
@@ -83,7 +87,7 @@ public class MainController {
 			stage.setResizable(false);
 			stage.setScene(new Scene(loader.getRoot()));
 			stage.setTitle("Yukitter");
-			stage.setHeight(95);
+			stage.setHeight(MIN_WINDOW_HEIGHT);
 			
 			//--- Command+Enterでツイートを送信するショートカットキーを設定 ---//
 			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
@@ -154,11 +158,12 @@ public class MainController {
 	 * @param e ユーザーのアイコンがクリックされた時のイベント
 	 */
 	public void evolveTimelinePane(MouseEvent e) {
-		if(stage.getHeight() == 95 ) {
-			stage.setHeight(375);
+		if(stage.getHeight() == MIN_WINDOW_HEIGHT ) {
+//			stage.setHeight(375);
+			stage.setHeight(MAX_WINDOW_HEIGHT);
 			timeline.requestFocus();
 		} else {
-			stage.setHeight(95);
+			stage.setHeight(MIN_WINDOW_HEIGHT);
 			icon.requestFocus();
 		}
 	}

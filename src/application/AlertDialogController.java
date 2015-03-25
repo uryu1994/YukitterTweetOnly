@@ -1,11 +1,16 @@
 package application;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import manager.DialogManager;
 import manager.ImageManager;
 import twitter4j.Status;
 import twitter4j.User;
+import twitter4j.UserMentionEntity;
+import twitterUtil.TwitterUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -23,7 +28,7 @@ public class AlertDialogController {
 	//-- ツイートのステータス --//
 	private Status status;
 	//-- イベントを行ったユーザー --//
-	private User user;
+//	private User user;
 	//-- ダイアログのStage --//
 	private Stage stage;
 	
@@ -74,7 +79,7 @@ public class AlertDialogController {
 				information.setText(user.getName() + "さんがリツイートしました");
 			}
 			
-			this.user = user;
+//			this.user = user;
 			this.status = status;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -107,8 +112,30 @@ public class AlertDialogController {
 	 */
 	public void onReply(MouseEvent e) {
 		System.out.println("@"+status.getUser().getScreenName()+" ");
-		MainController.getInstance().setText("@"+user.getScreenName()+" ", status.getId());
+		
+		MainController.getInstance().setText(createMentionString(), status.getId());
 		DialogManager.getSingleton().closeDialog(num);
+	}
+
+	/**
+	 * リプライを送るユーザーの文字列を作成(複数宛に対応)
+	 * 
+	 * 以下の順でリプライ用の文字列を生成する
+	 *  1. リプライを送ったユーザーのスクリーンネームを追加する
+	 *  2. UserMentionEntity配列の中から、自分以外のユーザー宛にリプライを作成
+	 * 
+	 * @return リプライを送るユーザー全員宛のスクリーンネーム群の文字列
+	 */
+	private String createMentionString() {
+		String userStr = "@" + status.getUser().getScreenName() + " ";
+		List<UserMentionEntity> mentionList
+				= new ArrayList<UserMentionEntity>(Arrays.asList(status.getUserMentionEntities()));
+		for(UserMentionEntity user : mentionList) {
+			if(!TwitterUtil.getScreenName().equals(user.getScreenName())) {
+				userStr += "@" + user.getScreenName() + " ";
+			}
+		}
+		return userStr;
 	}
 
 	/**

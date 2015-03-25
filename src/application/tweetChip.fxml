@@ -18,13 +18,6 @@
       <StackPane fx:id="stackPane">
          <children>
       <BorderPane fx:id="statusPane" minWidth="-1.0" prefWidth="250.0">
-               <center>
-      <Label fx:id="text" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="-1.0" text="テキストが入るよ。入るったら入るんだよ、どうしても入らない場合はまぁしょうがないけど、それでも入る時は入るんだよ。" textAlignment="LEFT" textOverrun="ELLIPSIS" underline="false" wrapText="true" BorderPane.alignment="TOP_LEFT">
-        <font>
-          <Font size="11.0" />
-        </font>
-      </Label>
-               </center>
                <top>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
@@ -50,7 +43,10 @@
                                     <Font size="9.0" />
                                  </font>
                               </Label>
-                              <ImageView fx:id="retweetUserIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="retweetUserIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets left="3.0" right="3.0" />
+                                 </HBox.margin></ImageView>
                            </children>
                         </HBox>
                         <HBox alignment="BOTTOM_LEFT" prefHeight="20.0" prefWidth="200.0">
@@ -65,6 +61,18 @@
                      </children>
                   </StackPane>
                </bottom>
+               <center>
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+            <Label fx:id="text" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="-1.0" text="テキストが入るよ。入るったら入るんだよ、どうしても入らない場合はまぁしょうがないけど、それでも入る時は入るんだよ。" textAlignment="LEFT" textOverrun="ELLIPSIS" underline="false" wrapText="true">
+              <font>
+                <Font size="11.0" />
+              </font>
+            </Label>
+                        <FlowPane fx:id="imageFlowPane" />
+                     </children>
+                  </VBox>
+               </center>
       </BorderPane>
             <HBox fx:id="functionPane" alignment="CENTER" visible="false" StackPane.alignment="CENTER">
                <children>

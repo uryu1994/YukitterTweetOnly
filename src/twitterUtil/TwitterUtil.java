@@ -18,6 +18,8 @@ public class TwitterUtil {
 	private static TwitterStream twitterStream;
 	//-- ログインしているユーザーのTwitterインスタンス --//
 	private static Twitter twitter;
+	//-- ログインしているユーザーのスクリーンネーム --//
+	private static String screenName;
 	
 	/**
 	 * コンストラクタ
@@ -34,6 +36,7 @@ public class TwitterUtil {
 		try {
 			twitter = new TwitterFactory().getInstance(OAuthConfiguration.createConfiguration());
 			icon = new Image(twitter.verifyCredentials().getBiggerProfileImageURL());
+			screenName = twitter.getScreenName();
 		} catch (IllegalStateException | TwitterException e) {
 			e.printStackTrace();
 		}
@@ -45,6 +48,10 @@ public class TwitterUtil {
 	 */
 	public static Twitter getTwitter() {
 		return twitter;
+	}
+	
+	public static String getScreenName() {
+		return screenName;
 	}
 	
 	/**

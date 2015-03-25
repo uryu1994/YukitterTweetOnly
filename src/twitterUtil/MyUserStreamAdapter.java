@@ -78,8 +78,8 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 		}
 		autoMecaotaReply(source);
 		
-		System.out.println("[debug] お気に入り後のステータス = [[ " + favoritedStatus + " ]]");
-		System.out.println("[info]" + source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
+//		System.out.println("[debug] お気に入り後のステータス = [[ " + favoritedStatus + " ]]");
+//		System.out.println("[info]" + source.getName() + "が" + target.getName() + "のツイート「" + favoritedStatus.getText() + "」をふぁぼった");
 	}
 	
 	/**

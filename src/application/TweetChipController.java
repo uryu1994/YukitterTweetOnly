@@ -12,10 +12,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
 public class TweetChipController extends ListCell<Status>{
@@ -53,6 +53,8 @@ public class TweetChipController extends ListCell<Status>{
 	private ImageView retweetUserIcon;
 	@FXML
 	private Label retweetUserName;
+	@FXML
+	private FlowPane imageFlowPane;
 	
 	/**
 	 * TweetChipControllerのコンストラクタ
@@ -85,7 +87,7 @@ public class TweetChipController extends ListCell<Status>{
 			return;
 		}
 		
-		System.out.println("[debug] _______ START UPDATE ITEM _______");
+//		System.out.println("[debug] _______ START UPDATE ITEM _______");
 		retweetedStatus = status.getRetweetedStatus();
 		if(retweetedStatus == null) {
 //		if(status.getRetweetedStatus() == null) {
@@ -110,8 +112,8 @@ public class TweetChipController extends ListCell<Status>{
 			System.out.println("[info] this Status has retweetedStatus.");
 		}
 		
-		System.out.println("[debug] added status is >> " + status);
-		System.out.println("[debug] retweetedStatus is >> " + status.getRetweetedStatus());
+//		System.out.println("[debug] added status is >> " + status);
+//		System.out.println("[debug] retweetedStatus is >> " + status.getRetweetedStatus());
 		
 		replyImage.setImage(ImageManager.getSingleton().getImage("reply"));
 		
@@ -135,8 +137,11 @@ public class TweetChipController extends ListCell<Status>{
 		
 		this.status = status;
 		
+		statusPane.setDisable(false);
+		functionPane.setVisible(false);
+		
 		setGraphic(container);
-		System.out.println("[debug] ^^^^^^^ END UPDATE ITEM ^^^^^^^\n");
+//		System.out.println("[debug] ^^^^^^^ END UPDATE ITEM ^^^^^^^\n");
 	}
 	
 	public void updateStatus(Status status) {
@@ -180,6 +185,13 @@ public class TweetChipController extends ListCell<Status>{
 			TwitterUtil.getTwitter().retweetStatus(status.getId());
 //			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().retweetStatus(status.getId()));
 			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
+		}
+	}
+	
+	public void setImageIntoPane() {
+		
+		if(status.getExtendedMediaEntities().length > 1) {
+			
 		}
 	}
 }
