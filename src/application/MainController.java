@@ -1,7 +1,6 @@
 package application;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -16,7 +15,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -29,73 +27,72 @@ import javafx.util.Callback;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
-import twitter4j.auth.OAuthAuthorization;
+import twitterUtil.TwitterUtil;
 
 public class MainController {
+	
+	//-- MainControllerクラスのインスタンス --//
 	private static MainController instance;
-	private static TwitterStream twitterStream;
-	private static Twitter twitter;
+	//--イムライン用のツイートを格納するインスタンス --//
 	private ObservableList<Status> timelineList;
-	public static ArrayList<Stage> list = new ArrayList<Stage>();
+	//-- MainControllerのステージを保持する --//
 	private Stage stage;
+	//--- リプライ元のツイートのStatusIDを保持 ---//
 	private Long inReplyToStatusId;
+	//-- タイムラインを閉じた時のウインドウの高さ --//
+	private final int MIN_WINDOW_HEIGHT = 100;
+	//-- タイムラインを展開した時のウインドウの高さ --//
+	private final int MAX_WINDOW_HEIGHT = 400;
 	
 	@FXML
 	private Label textCounter;
-	// TextArea wrote tweet text
 	@FXML
 	private TextArea tweetText;
 	@FXML
 	private MenuItem menuTweet;
 	@FXML
-	private MenuItem menuTimeline;
-	@FXML
-	private MenuItem menuTweetPane;
-	// User Name
-	@FXML
 	private Label userName;
-	// TwitterID
 	@FXML
 	private Label screenName;
-	// twitter icon
 	@FXML
 	private ImageView icon;
-	// ツイートボタン
 	@FXML
 	private Button tweetButton;
 	@FXML
 	public ListView<Status> timeline;
 	
 
-	public MainController (OAuthAuthorization oauth){
+	/**
+	 * コンストラクタ
+	 * 
+	 * FXMLをロードしてviewを生成
+	 * ショートカットキーの設定
+	 * ストリームタイムラインの起動
+	 * ログインとユーザ情報の取得
+	 * 
+	 * @param oauth OAuth認証に必要な情報を保持している
+	 */
+	public MainController (){
 
 		//--- 自身のインスタンスを保持 ---//
 		instance = this;
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("tweetOnly.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("MainPanel.fxml"));
 			loader.setController(this);
 			loader.load();
 			
-			Scene scene = new Scene(loader.getRoot());
 			stage = new Stage(StageStyle.UNIFIED);
 			stage.setResizable(false);
-			stage.setScene(scene);
+			stage.setScene(new Scene(loader.getRoot()));
 			stage.setTitle("Yukitter");
-			stage.setHeight(95);
+			stage.setHeight(MIN_WINDOW_HEIGHT);
 			
-			//--- Comand+Enterでツイートを送信するショートカットキーを設定 ---//
+			//--- Command+Enterでツイートを送信するショートカットキーを設定 ---//
 			menuTweet.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
-//			menuTimeline.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
-//			menuTweetPane.setAccelerator(new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN));
-
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -110,129 +107,131 @@ public class MainController {
 		});
 		timeline.setItems(timelineList);
 		
-		// --- ユーザー情報を取得して表示 ---//
+		//-- 直近10件のツイートとユーザーの情報を表示 --//
 		try {
-			twitter = new TwitterFactory().getInstance(oauth);
-			timelineList.addAll(twitter.getHomeTimeline());
-			userName.setText(twitter.verifyCredentials().getName());
-			screenName.setText("@"+ twitter.getScreenName());
-			Image image = new Image(twitter.verifyCredentials().getBiggerProfileImageURL());
-			icon.setImage(image);
-			icon.requestFocus();
-		} catch (IllegalStateException | TwitterException e) {
-			e.printStackTrace();
-		}
-		
-		// --- ツイッターストリームのインスタンス取得 ---//
-		twitterStream = new TwitterStreamFactory().getInstance(oauth);
-		twitterStream.addListener(new MyUserStreamAdapter());
-		twitterStream.user();
-		
-		//--- リプライ通知のダイアログを管理するマネージャーを起動 ---//
-		DialogManager.getInstance();
-		
-		stage.show();
-	}
-
-	// --- 本文をツイートするボタンの処理 ---//
-	public void onTweet(ActionEvent e) {
-		executeTweet();
-	}
-
-	//--- ツイートを実行 ---//
-	private void executeTweet() {
-		String txt = tweetText.getText();
-		if (txt.length() == 0)
-			return;
-		try {
-			StatusUpdate status = new StatusUpdate(txt);
-			if(inReplyToStatusId != null) {
-				status.setInReplyToStatusId(inReplyToStatusId);
-			}
-			twitter.updateStatus(status);
-			tweetText.clear();
-			inReplyToStatusId = null;
-			System.out.println("-->> Tweet:" + txt);
+			timelineList.addAll(TwitterUtil.getTwitter().getHomeTimeline());
+			userName.setText(TwitterUtil.getTwitter().verifyCredentials().getName());
+			screenName.setText("@"+ TwitterUtil.getTwitter().getScreenName());
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
-	}
 
-	public void evolveTweetPane(ActionEvent e) {
-		if(stage.getWidth() == 72) {
-			stage.setWidth(275);
-			stage.setHeight(95);
-			tweetText.requestFocus();
-		} else {
-			stage.setWidth(72);
-			stage.setHeight(95);
-			icon.requestFocus();
-		}
-		tweetText.clear();
-	}
-
-	public void evolveTimelinePane(MouseEvent e) {
-		if(stage.getHeight() == 95 ) {
-//			stage.setWidth(275);
-			stage.setHeight(360);
-			timeline.requestFocus();
-		} else {
-//			stage.setWidth(72);
-			stage.setHeight(95);
-			icon.requestFocus();
-		}
-//		tweetText.clear();
+		//-- ユーザーのアイコンを表示 --//
+		icon.setImage(TwitterUtil.getIcon());
+		icon.requestFocus();
+		//-- ウインドウを可視化 --//
+		stage.show();
 	}
 	
+	/**
+	 * Command+Enterのショートカットキーを押したときに呼び出される
+	 * 
+	 * テキストエリアの文字数が0の時はつぶやけない
+	 * inReplyToStatusIdがnullではない時にリプライチェインをつなぐ
+	 * ツイート後はテキストエリアをcleanしてリプライチェインを切る
+	 * 
+	 * @param e ショートカットキーが押された時のイベント
+	 */
+	public void onTweet(ActionEvent e) {
+		if(tweetText.getText().length() == 0) {
+			return ;
+		}
+		
+		StatusUpdate status = new StatusUpdate(tweetText.getText());
+		if(inReplyToStatusId != null) {
+			status.setInReplyToStatusId(inReplyToStatusId);
+		}
+
+		try {
+			TwitterUtil.getTwitter().updateStatus(status);
+			tweetText.clear();
+			inReplyToStatusId = null;
+		} catch (TwitterException te) {
+			te.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * タイムラインの表示/非表示を切り替える
+	 * 
+	 * @param e ユーザーのアイコンがクリックされた時のイベント
+	 */
+	public void evolveTimelinePane(MouseEvent e) {
+		if(stage.getHeight() == MIN_WINDOW_HEIGHT ) {
+//			stage.setHeight(375);
+			stage.setHeight(MAX_WINDOW_HEIGHT);
+			timeline.requestFocus();
+		} else {
+			stage.setHeight(MIN_WINDOW_HEIGHT);
+			icon.requestFocus();
+		}
+	}
+	
+	/**
+	 * テキストエリア内の文字数を140字からカウントダウンする
+	 * 
+	 * 文字数が残り10文字以下になったら赤字に変更
+	 * テキストエア内の文字数が0の時にリプライチェインを切る
+	 * 
+	 * @param e キーボードのキーが(一度押して)放された時のイベント
+	 */
 	public void checkTextCount (KeyEvent e) {
 		int count = 140 - tweetText.getText().length();
 		textCounter.setText(String.valueOf(count));
 		if(count <= 10) {
+			//-- 文字数上限まで残り10文字以下の時は赤字 --//
 			textCounter.setStyle("-fx-text-fill: red;");
 		} else {
+			//-- 0~130文字の時は黒字 --//
 			textCounter.setStyle("-fx-text-fill: black;");
 		}
 		
+		//-- テキストエリアの文字列が0の時にリプライチェインを切る --//
 		if(tweetText.getText().length() == 0) {
 			inReplyToStatusId = null;
 		}
 	}
 	
-	// --- IDをクリックするとステータス画面が開いちゃうぞ---//
+	/**
+	 * @TODO: IDをクリックするとステータス画面が開く
+	 * 
+	 * @param e ユーザーIクリックした時に呼び出される
+	 */
 	public void onMyStatus(MouseEvent e) {
 		System.out.println("onMyStatus");
 	}
-
-	public void setStage(Stage stage) {
-		this.stage = stage;
-	}
-
-	public Stage getStage() {
-		return this.stage;
-	}
-
+	
+	/**
+	 * テキストエリアにツイートを入力する
+	 * 
+	 * 主に別のウインドウからリプライ用のユーザークリーンネームを入力するために使う
+	 * 
+	 * @param s ツイートする本文
+	 * @param inReplyToStatusId リプライチェインをつなぐためのStatusID
+	 */
 	public void setText(String s, Long inReplyToStatusId) {
 		this.inReplyToStatusId = inReplyToStatusId;
 		tweetText.setText(s);
-	}
-
-	public static void shutdownTwitterStream() {
-		if(twitterStream != null) {
-			twitterStream.shutdown();
-		}
+		tweetText.requestFocus();
 	}
 	
+	/**
+	 * タイムラインリストに新着ツイートを追加する
+	 * 
+	 * @param status 新着ツイートのステータス
+	 */
 	public void addStatus(Status status) {
 		Platform.runLater( () -> {
 			timelineList.add(0, status);
 		});
-
 	}
 	
-	public static MainController getInstance() {
-		return instance;
-	}
-	
+	/**
+	 * タイムラインリストに複数の新着ツイートを追加する
+	 * 
+	 * @param list 新着ツイート群
+	 */
 	public void addStatuses(ResponseList<Status> list){
 		Platform.runLater(() -> {
 			try {
@@ -243,7 +242,54 @@ public class MainController {
 		});
 	}
 	
-	public Twitter getTwitter() {
-		return twitter;
+	/**
+	 * タイムラインリストの中のステータスを更新する
+	 * 
+	 * synchronized
+	 * 主にリツイート/お気に入りした時に呼び出される
+	 * 
+	 * @param newStatus 情報が変更された新しいステータス
+	 */
+	public void updateStatus(Status newStatus) {
+		System.out.println("[debug]"+ newStatus);
+		synchronized(timelineList) {
+			for(Status oldStatus : timelineList) {
+				if(oldStatus.getId() == newStatus.getId()) {
+					int num = timelineList.indexOf(oldStatus);
+					timelineList.remove(num);
+					timelineList.add(num, newStatus);
+					System.out.println("[info] COMPLETED REPLACE STATUS");
+					return ;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * タイムラインリストの中のステータスを削除する
+	 * 
+	 * 以下の処理をする時に呼び出される
+	 *  - リツイートの解除
+	 *  @TODO: ツイートの削除
+	 */
+	public void deleteRetweetStatus(Status retweetedStatus) {
+		synchronized(timelineList) {
+			for(Status myRetweetStatus : timelineList) {
+				if(myRetweetStatus.getRetweetedStatus().getId() == retweetedStatus.getId()) {
+					int num = timelineList.indexOf(myRetweetStatus);
+					timelineList.remove(num);
+					System.out.println("[info] COMPLETED DELETE RETWEET STATUS");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * MainControllerのインスタンスのgetterメソッド
+	 * 
+	 * @return MainControllerのインスタンス
+	 */
+	public static MainController getInstance() {
+		return instance;
 	}
 }
