@@ -40,20 +40,24 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 		
 		MainController.getInstance().addStatus(status);
 		
-		//--- if mention come ---//
+		//--- メンションを受信した時の処理 ---//
 		if(screenName.equals(status.getInReplyToScreenName())) {
 			Platform.runLater( () -> {
-				DialogManager.getSingleton().createDialog(status, "skyBlue");
+				DialogManager.getSingleton().createDialog(status, status.getUser(), "reply");
 			});
 		}
 		
-		if(status.isRetweeted()) {
+		//-- リツイートされた時の処理 --//
+		if(status.isRetweet()) {
 			if(screenName.equals(status.getRetweetedStatus().getUser().getScreenName())) {
 				Platform.runLater( () -> {
-					DialogManager.getSingleton().createDialog(status, "palegreen");
+					DialogManager.getSingleton().createDialog(status.getRetweetedStatus(), status.getUser(), "retweet");
 				});
 			}
 		}
+
+//		System.out.println("[debug] status information is >> " + status);
+//		System.out.println("[debug] status.getRetweetedStatus is >> " + status.getRetweetedStatus() );
 	}
 	
 	/**
@@ -67,10 +71,11 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	public void onFavorite(User source, User target, Status favoritedStatus) {
 		super.onFavorite(source,target,favoritedStatus);
 
-		Platform.runLater( () -> {
-			DialogManager.getSingleton().createDialog(favoritedStatus, "khaki");
-		});
-
+		if(screenName.equals(target.getScreenName())) {
+			Platform.runLater( () -> {
+				DialogManager.getSingleton().createDialog(favoritedStatus, source, "favorite");
+			});
+		}
 		autoMecaotaReply(source);
 		
 		System.out.println("[debug] お気に入り後のステータス = [[ " + favoritedStatus + " ]]");

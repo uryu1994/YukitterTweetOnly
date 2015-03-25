@@ -7,6 +7,7 @@ import java.util.List;
 
 import application.AlertDialogController;
 import twitter4j.Status;
+import twitter4j.User;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -34,8 +35,8 @@ public class DialogManager {
 	 *   - khaki: お気に入り
 	 *   - palegreen: リツイート
 	 */
-	public void createDialog(Status status, String color) {
-		AlertDialogController controller = new AlertDialogController(status, color);
+	public void createDialog(Status status, User user, String func) {
+		AlertDialogController controller = new AlertDialogController(status, user, func);
 		controller.updateNum(dialogs.size());
 
 		dialogs.add(controller);
@@ -54,7 +55,7 @@ public class DialogManager {
 			Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
 			dialog.setX(d.getWidth() - 284);
-			dialog.setY(50 + 90*i);
+			dialog.setY(50 + 100*i);
 			dialog.show();
 		}
 		System.out.println(dialogs);
@@ -100,7 +101,7 @@ public class DialogManager {
 	}
 	
 	/**
-	 *ングルトン実装でインスタンスを取得するgetterメソッド
+	 * シングルトン実装でインスタンスを取得するgetterメソッド
 	 * 
 	 * @return ialogManagerのインスタンス
 	 */

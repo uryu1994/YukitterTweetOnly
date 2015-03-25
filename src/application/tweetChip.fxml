@@ -11,12 +11,15 @@
 
 <HBox fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-<ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#onChangeMenuPane" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+<ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#onChangeMenuPane" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+         <image>
+            <Image url="@../../../../../Pictures/Yukineko.png" />
+         </image></ImageView>
       <StackPane fx:id="stackPane">
          <children>
       <BorderPane fx:id="statusPane" minWidth="-1.0" prefWidth="250.0">
                <center>
-      <Label fx:id="text" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="-1.0" text="テキストが入るよ。" textAlignment="LEFT" textOverrun="ELLIPSIS" underline="false" wrapText="true" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="text" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="-1.0" text="テキストが入るよ。入るったら入るんだよ、どうしても入らない場合はまぁしょうがないけど、それでも入る時は入るんだよ。" textAlignment="LEFT" textOverrun="ELLIPSIS" underline="false" wrapText="true" BorderPane.alignment="TOP_LEFT">
         <font>
           <Font size="11.0" />
         </font>
@@ -34,12 +37,33 @@
                      </children>
                   </VBox>
                </top>
+               <right>
+                  <BorderPane prefHeight="20.0" BorderPane.alignment="CENTER" />
+               </right>
                <bottom>
-        <Label fx:id="via" alignment="CENTER_LEFT" prefWidth="-1.0" text="via" BorderPane.alignment="CENTER_LEFT">
-          <font>
-            <Font size="9.0" fx:id="x1" />
-          </font>
-        </Label>
+                  <StackPane alignment="BOTTOM_LEFT" prefHeight="20.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox alignment="TOP_RIGHT" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="retweetUserName">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fx:id="retweetUserIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="20.0" prefWidth="200.0">
+                           <children>
+                    <Label fx:id="via" alignment="BOTTOM_LEFT" prefWidth="-1.0" text="via twitter for iPhone">
+                      <font>
+                        <Font size="8.0" fx:id="x1" />
+                      </font>
+                    </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </StackPane>
                </bottom>
       </BorderPane>
             <HBox fx:id="functionPane" alignment="CENTER" visible="false" StackPane.alignment="CENTER">
