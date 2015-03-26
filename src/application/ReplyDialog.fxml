@@ -10,9 +10,9 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" fx:id="notificationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="274.0" style="-fx-background-radius: 10;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" fx:id="notificationPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="274.0" style="-fx-background-radius: 10;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <ImageView fx:id="icon" fitHeight="70.0" fitWidth="70.0" layoutX="1.0" onMouseClicked="#onCloseDialog" pickOnBounds="true" preserveRatio="true" style="" x="0.0" y="0.0" AnchorPane.topAnchor="1.0" />
+    <ImageView fx:id="icon" fitHeight="66.0" fitWidth="66.0" layoutX="3.0" layoutY="8.0" onMouseClicked="#onCloseDialog" pickOnBounds="true" preserveRatio="true" style="" x="0.0" y="0.0" AnchorPane.topAnchor="8.0" />
     <Label fx:id="userName" layoutX="71.0" layoutY="1.0" onMouseClicked="#onShowStatus" text="NO NAME">
       <font>
         <Font name="System Bold" size="13.0" />

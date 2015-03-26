@@ -83,6 +83,7 @@ public class ImageManager {
 						imageView.setOnMouseReleased(new EventHandler<MouseEvent>() {
 							@Override
 							public void handle(MouseEvent event) {
+								@SuppressWarnings("unused")
 								ImageDialogController imageDialogController = new ImageDialogController(media.getMediaURL());
 							}
 						});
