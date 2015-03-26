@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -26,7 +27,7 @@ public class TweetChipController extends ListCell<Status>{
 	private Status retweetedStatus;  
 	//-- viaを抜き出すためのPattern定義 --//
 	private final Pattern pattern = Pattern.compile("<a href=\"(.*)\" rel=\".*\">(.*)</a>");
-
+	
 	@FXML
 	private HBox container;
 	@FXML
@@ -55,6 +56,12 @@ public class TweetChipController extends ListCell<Status>{
 	private Label retweetUserName;
 	@FXML
 	private FlowPane imageFlowPane;
+	@FXML
+	private ImageView image1;
+	@FXML
+	private Label favoriteCount;
+	@FXML
+	private Label retweetCount;
 	
 	/**
 	 * TweetChipControllerのコンストラクタ
@@ -88,13 +95,17 @@ public class TweetChipController extends ListCell<Status>{
 		}
 		
 //		System.out.println("[debug] _______ START UPDATE ITEM _______");
+		this.status = status;
 		retweetedStatus = status.getRetweetedStatus();
+
 		if(retweetedStatus == null) {
-//		if(status.getRetweetedStatus() == null) {
 			userName.setText(status.getUser().getName());
 			screenName.setText("@"+ status.getUser().getScreenName());
 			icon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
 			text.setText(status.getText());
+			
+			favoriteCount.setText(String.valueOf(status.getFavoriteCount()));
+			retweetCount.setText(String.valueOf(status.getRetweetCount()));
 			
 			retweetUserIcon.setVisible(false);
 			retweetUserName.setVisible(false);
@@ -103,13 +114,16 @@ public class TweetChipController extends ListCell<Status>{
 			screenName.setText("@"+ retweetedStatus.getUser().getScreenName());
 			icon.setImage(ImageManager.getSingleton().getImage(retweetedStatus.getUser()));
 			text.setText(retweetedStatus.getText());
+
+			favoriteCount.setText(String.valueOf(retweetedStatus.getFavoriteCount()));
+			retweetCount.setText(String.valueOf(retweetedStatus.getRetweetCount()));
 			
 			retweetUserIcon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
 			retweetUserName.setText("Retweeted by " + status.getUser().getName());
 			
 			retweetUserIcon.setVisible(true);
 			retweetUserName.setVisible(true);
-			System.out.println("[info] this Status has retweetedStatus.");
+//			System.out.println("[info] this Status has retweetedStatus.");
 		}
 		
 //		System.out.println("[debug] added status is >> " + status);
@@ -135,13 +149,14 @@ public class TweetChipController extends ListCell<Status>{
 			via.setText("via " + matcher.group(2));
 		}
 		
-		this.status = status;
+		inertMedia();
 		
 		statusPane.setDisable(false);
 		functionPane.setVisible(false);
 		
 		setGraphic(container);
 //		System.out.println("[debug] ^^^^^^^ END UPDATE ITEM ^^^^^^^\n");
+		
 	}
 	
 	public void updateStatus(Status status) {
@@ -162,13 +177,26 @@ public class TweetChipController extends ListCell<Status>{
 		}
 	}
 	
+	private void inertMedia() {
+		imageFlowPane.getChildren().clear();
+		for(Image image : ImageManager.getSingleton().getImage(status, retweetedStatus)) {
+			ImageView imageView = new ImageView(image);
+			imageView.setStyle("-fx-background-color: skyBlue;");
+//			imageView.setFitWidth(80);
+//			imageView.setFitHeight(100);
+//			imageView.setViewport(new Rectangle2D(image.getWidth()/2, image.getHeight()/2, 100, 100));
+			imageFlowPane.getChildren().add(imageView);
+			imageFlowPane.setVisible(true);
+		}
+	}
+	
 	public void onReply(MouseEvent e) {
-		System.out.println("[debug] Reply button is Pushed !!");		
+		System.out.println("[debug]リプライボタンが押された !!");		
 		MainController.getInstance().setText("@"+status.getUser().getScreenName()+" ", status.getId());
 	}
 	
 	public void onFavorite(MouseEvent e) throws TwitterException {
-		System.out.println("[debug] Favorite button is Pushed !!");
+		System.out.println("[debug] お気に入りボタンが押された !!");
 		if(status.isFavorited()) {
 			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().destroyFavorite(status.getId()));
 		} else {
@@ -178,12 +206,14 @@ public class TweetChipController extends ListCell<Status>{
 	}
 	
 	public void onRetweet(MouseEvent e) throws TwitterException {
-		System.out.println("[debug] Retweet button is Pushed !!");
+		System.out.println("[debug] リツイートボタンが押された !!");
 		if(status.isRetweeted()) {
-			MainController.getInstance().deleteRetweetStatus(status);
+//			System.out.println("[debug] リツイートが解除された");
+//			MainController.getInstance().deleteRetweetStatus(status);
 		} else {
-			TwitterUtil.getTwitter().retweetStatus(status.getId());
-//			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().retweetStatus(status.getId()));
+//			TwitterUtil.getTwitter().retweetStatus(status.getId());
+			System.out.println("[debug] リツイートした !!");
+			MainController.getInstance().updateStatus(TwitterUtil.getTwitter().retweetStatus(status.getId()));
 			retweetImage.setImage(ImageManager.getSingleton().getImage("retweeted"));
 		}
 	}

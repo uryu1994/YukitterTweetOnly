@@ -20,13 +20,7 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	 * 
 	 */
 	public MyUserStreamAdapter () {
-		try {
-			screenName = TwitterUtil.getTwitter().getScreenName();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
+			screenName = TwitterUtil.getScreenName();
 	}
 
 	/**
@@ -37,9 +31,9 @@ public class MyUserStreamAdapter extends UserStreamAdapter {
 	@Override
 	public void onStatus(Status status) {
 		super.onStatus(status);
-		
+
 		MainController.getInstance().addStatus(status);
-		
+
 		//--- メンションを受信した時の処理 ---//
 		if(screenName.equals(status.getInReplyToScreenName())) {
 			Platform.runLater( () -> {

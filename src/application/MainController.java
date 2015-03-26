@@ -251,34 +251,49 @@ public class MainController {
 	 * @param newStatus 情報が変更された新しいステータス
 	 */
 	public void updateStatus(Status newStatus) {
-		System.out.println("[debug]"+ newStatus);
+		System.out.println("[debug] "+ newStatus);
 		synchronized(timelineList) {
 			for(Status oldStatus : timelineList) {
-				if(oldStatus.getId() == newStatus.getId()) {
-					int num = timelineList.indexOf(oldStatus);
-					timelineList.remove(num);
-					timelineList.add(num, newStatus);
-					System.out.println("[info] COMPLETED REPLACE STATUS");
-					return ;
+				int num = timelineList.indexOf(oldStatus);
+				if(newStatus.isRetweeted()) {
+					if(oldStatus.getId() == newStatus.getRetweetedStatus().getId()) {
+						timelineList.remove(num);
+						timelineList.add(num, newStatus.getRetweetedStatus());
+						System.out.println("[debug] リツイートで入れ替えました。");
+						return ;
+					}
+				} else {
+					if(oldStatus.getId() == newStatus.getId()) {
+						timelineList.remove(num);
+						timelineList.add(num, newStatus);
+						System.out.println("[debug] お気に入りで入れ替えました。");
+						
+						return ;
+				}
+				
+
 				}
 			}
 		}
 	}
 	
 	/**
-	 * タイムラインリストの中のステータスを削除する
+	 * タイムラインリストの中のリツイートしたステータスを削除する
 	 * 
 	 * 以下の処理をする時に呼び出される
 	 *  - リツイートの解除
 	 *  @TODO: ツイートの削除
 	 */
-	public void deleteRetweetStatus(Status retweetedStatus) {
+	public void deleteRetweetStatus(Status myRetweetStatus) {
 		synchronized(timelineList) {
-			for(Status myRetweetStatus : timelineList) {
-				if(myRetweetStatus.getRetweetedStatus().getId() == retweetedStatus.getId()) {
-					int num = timelineList.indexOf(myRetweetStatus);
+			for(Status retweetedStatus : timelineList) {
+				if(retweetedStatus.getId() == myRetweetStatus.getId()) {
+					int num = timelineList.indexOf(retweetedStatus);
+
 					timelineList.remove(num);
-					System.out.println("[info] COMPLETED DELETE RETWEET STATUS");
+					timelineList.add(num, myRetweetStatus.getRetweetedStatus());
+					System.out.println("[info] リツイート消したよ。");
+					return ;
 				}
 			}
 		}
