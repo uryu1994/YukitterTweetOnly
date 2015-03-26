@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -68,7 +67,7 @@ public class TweetChipController extends ListCell<Status>{
 	 * 
 	 */
 	public TweetChipController () {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("tweetChip.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("TweetChip.fxml"));
 		fxmlLoader.setController(this);
 		
 		try {
@@ -179,9 +178,7 @@ public class TweetChipController extends ListCell<Status>{
 	
 	private void inertMedia() {
 		imageFlowPane.getChildren().clear();
-		for(Image image : ImageManager.getSingleton().getImage(status, retweetedStatus)) {
-			ImageView imageView = new ImageView(image);
-			imageView.setStyle("-fx-background-color: skyBlue;");
+		for(ImageView imageView : ImageManager.getSingleton().getImageView(status, retweetedStatus)) {
 //			imageView.setFitWidth(80);
 //			imageView.setFitHeight(100);
 //			imageView.setViewport(new Rectangle2D(image.getWidth()/2, image.getHeight()/2, 100, 100));

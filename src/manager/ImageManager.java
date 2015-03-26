@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import application.ImageDialogController;
 import application.ThumbnailBuilder;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.User;
@@ -15,14 +19,14 @@ import twitter4j.User;
 public class ImageManager {
 	private static Map<User, Image> userIconImage;
 	private static Map<String, Image> functionImage;
-	private static Map<Long, ArrayList<Image>> tweetInImage;
+	private static Map<Long, ArrayList<ImageView>> tweetInImage;
 
 	private static ImageManager instance;
 	
 	private ImageManager() {
 		userIconImage = new HashMap<User, Image>();
 		functionImage = new HashMap<String, Image>();
-		tweetInImage = new HashMap<Long, ArrayList<Image>>();
+		tweetInImage = new HashMap<Long, ArrayList<ImageView>>();
 		
 		Image replyImage = new Image("image/reply.png");
 		Image favoriteImage = new Image("image/favorite.png");
@@ -57,7 +61,7 @@ public class ImageManager {
 	 * @param retweetedStatus リツイート元のステータス情報
 	 * @return ツイートに添付された画像のArrayList
 	 */
-	public ArrayList<Image> getImage(Status myStatus, Status retweetedStatus) {
+	public ArrayList<ImageView> getImageView(Status myStatus, Status retweetedStatus) {
 		Status status;
 		
 		if(retweetedStatus == null) {
@@ -67,14 +71,24 @@ public class ImageManager {
 		}
 		
 		MediaEntity[] medias = status.getExtendedMediaEntities();
-		ArrayList<Image> array = new ArrayList<Image>();
+		ArrayList<ImageView> array = new ArrayList<ImageView>();
 		if(medias.length == 0) {
 			return array;
 		} else {
 			if(!tweetInImage.containsKey(status.getId())) {
 				for(MediaEntity media : medias) {
 					try {
-						array.add(ThumbnailBuilder.getThumbnailImage(new URL(media.getMediaURL())));
+						ImageView imageView = new ImageView(ThumbnailBuilder.getThumbnailImage(new URL(media.getMediaURL())));
+						imageView.setStyle("-fx-background-color: skyBlue;");
+						imageView.setOnMouseReleased(new EventHandler<MouseEvent>() {
+							@Override
+							public void handle(MouseEvent event) {
+								@SuppressWarnings("unused")
+								ImageDialogController imageDialogController = new ImageDialogController(media.getMediaURL());
+							}
+						});
+
+						array.add(imageView);
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					}

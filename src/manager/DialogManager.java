@@ -1,6 +1,5 @@
 package manager;
 
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import javafx.stage.Stage;
 
 public class DialogManager {
 	private static DialogManager instance;
-	private static List<AlertDialogController> dialogs;
+	private static List<AlertDialogController> alerts;
 	private static Media sound;
 	
 	/**
@@ -22,7 +21,7 @@ public class DialogManager {
 	 * 
 	 */
 	private DialogManager() {
-		dialogs  = new ArrayList<AlertDialogController>();
+		alerts  = new ArrayList<AlertDialogController>();
 		sound = new Media(getClass().getResource("sample.mp3").toExternalForm());
 	}
 
@@ -36,29 +35,36 @@ public class DialogManager {
 	 *   - palegreen: リツイート
 	 */
 	public void createDialog(Status status, User user, String func) {
+		for(AlertDialogController alert : alerts) {
+			if(alert.getStatus().getId() == status.getId() && func.equals(alert.getFunc())) {
+				alerts.get(alerts.indexOf(alert)).setInfo(status, user);
+				sound();
+				showAllAlerts();
+				return ;
+			}
+		}
+		
 		AlertDialogController controller = new AlertDialogController(status, user, func);
-		controller.updateNum(dialogs.size());
+		controller.setNum(alerts.size());
 
-		dialogs.add(controller);
+		alerts.add(controller);
 		sound();
-		showDialogs();
+		showAllAlerts();
 	}
 	
 	/**
 	 * ArrayListに格納されているすべてのアラートダイアログを表示する
 	 * 
 	 */
-	public void showDialogs() {
-		for(int i=0; i<dialogs.size(); i++) {
-			Stage dialog = dialogs.get(i).getStage();
-			
-			Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+	public void showAllAlerts() {
+		for(int i=0; i<alerts.size(); i++) {
+			Stage dialog = alerts.get(i).updateView();
 
-			dialog.setX(d.getWidth() - 284);
-			dialog.setY(50 + 100*i);
+			dialog.setX(Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 284);
+			dialog.setY(50 + 90*i);
 			dialog.show();
 		}
-		System.out.println(dialogs);
+		System.out.println(alerts);
 	}
 	
 	/**
@@ -72,10 +78,10 @@ public class DialogManager {
 	 * @param num AlertDialogControllerが保持しているArrayList内のインデクス
 	 */
 	public void closeDialog(int num) {
-		dialogs.get(num).getStage().close();
-		dialogs.remove(num);
+		alerts.get(num).getStage().close();
+		alerts.remove(num);
 		reNumbering(num);
-		showDialogs();
+		showAllAlerts();
 	}
 	
 	/**
@@ -87,8 +93,8 @@ public class DialogManager {
 	 * @param num 削除されたインデクスの数字
 	 */
 	private void reNumbering(int num) {
-		for(int i=num; i<dialogs.size();i++) {
-			dialogs.get(i).updateNum(i);
+		for(int i=num; i<alerts.size();i++) {
+			alerts.get(i).setNum(i);
 		}
 	}
 	
@@ -119,7 +125,7 @@ public class DialogManager {
 	 * シャットダウン時に呼ばれる
 	 */
 	public void shutdownAllDialogs() {
-		for(int i=0; i<dialogs.size(); i++) {
+		for(int i=0; i<alerts.size(); i++) {
 			closeDialog(i);
 		}
 	}

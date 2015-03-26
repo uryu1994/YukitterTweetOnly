@@ -89,7 +89,7 @@ public class OAuthController {
 	 * @param owner 親ステージのStageインスタンス
 	 */
 	private void showOAuthWindow(Stage owner) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("oAuthWindow.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("OAuthWindow.fxml"));
 		loader.setController(this);
 		
 		try {

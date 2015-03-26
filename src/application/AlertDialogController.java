@@ -11,6 +11,10 @@ import twitter4j.Status;
 import twitter4j.User;
 import twitter4j.UserMentionEntity;
 import twitterUtil.TwitterUtil;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 public class AlertDialogController {
 
@@ -27,11 +32,14 @@ public class AlertDialogController {
 	private int num;
 	//-- ツイートのステータス --//
 	private Status status;
-	//-- イベントを行ったユーザー --//
-//	private User user;
+	//-- funcの操作を行ったユーザー --//
+	private User user;
+	//-- リプライ、お気に入り、リツイートを示す文字列--//
+	private String func;
 	//-- ダイアログのStage --//
 	private Stage stage;
-	
+	//-- 軌道から7秒後にダイアログを閉じるスレッドのインスタンス --//
+	Timeline closeAlertThread;
 	@FXML
 	private Label userName;
 	@FXML
@@ -49,7 +57,16 @@ public class AlertDialogController {
 	 * AlertDialogControllerのコンストラクタ
 	 */
 	public AlertDialogController(Status status, User user, String func) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("AlertDialog.fxml"));
+		this.status = status;
+		this.user = user;
+		this.func = func;
+		
+		FXMLLoader loader;
+		if("reply".equals(func)) {
+			loader = new FXMLLoader(getClass().getResource("ReplyDialog.fxml"));	
+		} else {
+			loader = new FXMLLoader(getClass().getResource("FavRetDialog.fxml"));
+		}
 		loader.setController(this);
 
 		try {
@@ -57,44 +74,54 @@ public class AlertDialogController {
 			stage = new Stage(StageStyle.TRANSPARENT);
 			stage.setScene(scene);
 			stage.setResizable(false);
+
+			deleteDialogTimer();			
+			updateView();
 			
-			userName.setText(status.getUser().getName());
-			text.setText(status.getText());
-			icon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
-//			notificationPane.setStyle("-fx-background-color: " + color + ";");
-//			userIcon.setImage(ImageManager.getSingleton().getImage(user));
-//			information.setText(user.getName() + "さん" + infoStr);
-			
-			if("reply".equals(func)) {
-				notificationPane.setStyle("-fx-background-color: skyBlue;");
-//				userIcon.setImage(ImageManager.getSingleton().getImage(user));
-//				information.setText(user.getName() + "さんからリプライを受信しました");
-			} else if("favorite".equals(func)) {
-				notificationPane.setStyle("-fx-background-color: khaki;");
-				userIcon.setImage(ImageManager.getSingleton().getImage(user));
-				information.setText(user.getName() + "さんがお気に入りしました");
-			} else if("retweet".equals(func)) {
-				notificationPane.setStyle("-fx-background-color: palegreen;");
-				userIcon.setImage(ImageManager.getSingleton().getImage(user));
-				information.setText(user.getName() + "さんがリツイートしました");
-			}
-			
-//			this.user = user;
-			this.status = status;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * インデクスを保持する
+	 * インデクス情報を更新するsetter
 	 * 
 	 * @param n ArrayList内のインデクス
 	 */
-	public void updateNum(int n) {
+	public void setNum(int n) {
 		this.num = n;
 	}
 	
+	/**
+	 * ステータス情報と処理を行ったユーザー情報のsetter
+	 *
+	 * @param status 新しいステータス情報
+	 * @param user 新しいユーザー情報
+	 */
+	
+	public void setInfo(Status status, User user) {
+		closeAlertThread.stop();
+		this.status = status;
+		this.user = user;
+		updateView();
+	}
+	
+	/**
+	 * ステータス情報のgetter
+	 * @return このコントローラーが保持するステータス情報
+	 */
+	public Status getStatus() {
+		return status;
+	}
+	
+	/**
+	 * funcのgetter
+	 * 
+	 * @param リプライ(reply)か、お気に入り(favorite)か、リツイート(retweet)のいずれかの文字列
+	 */
+	public String getFunc() {
+		return func;
+	}
 	/**
 	 * 外部からステージをShow/CloseするためのStageのgetterメソッド
 	 * 
@@ -148,6 +175,42 @@ public class AlertDialogController {
 		
 	}
 	
+	public Stage updateView() {
+		userName.setText(status.getUser().getName());
+		text.setText(status.getText());
+		icon.setImage(ImageManager.getSingleton().getImage(status.getUser()));
+		
+		if("reply".equals(func)) {
+			notificationPane.setStyle("-fx-background-color: skyBlue;");
+		} else if("favorite".equals(func)) {
+			notificationPane.setStyle("-fx-background-color: khaki;");
+			userIcon.setImage(ImageManager.getSingleton().getImage(user));
+
+			String favStr = "Favorited by " + user.getName();
+			if(status.getFavoriteCount() > 1 ) {
+				favStr += " and " + (status.getFavoriteCount()-1) + " Others";
+			}
+			
+			information.setText(favStr);
+		} else if("retweet".equals(func)) {
+			notificationPane.setStyle("-fx-background-color: palegreen;");
+			userIcon.setImage(ImageManager.getSingleton().getImage(user));
+
+			String retStr = "Retweeted by " + user.getName();
+			if(status.getRetweetCount() > 1 ) {
+				retStr += " and " + (status.getRetweetCount()-1) + " Others";
+			}
+			
+			information.setText(retStr);
+		}
+		
+		if(!"reply".equals(func)) {
+			closeAlertThread.play();	
+		}
+		
+		return stage;
+	}
+	
 	/**
 	 * アイコンをクリックした時に呼び出される
 	 * 
@@ -158,4 +221,16 @@ public class AlertDialogController {
 	public void onCloseDialog(MouseEvent e) {
 		DialogManager.getSingleton().closeDialog(num);
 	}
+	
+	public void deleteDialogTimer() {
+		closeAlertThread = new Timeline(
+				new KeyFrame(Duration.seconds(7), new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent event) {
+				DialogManager.getSingleton().closeDialog(num);
+		        System.out.println("this is called every 7 seconds on UI thread");
+		    }
+		}));
+	}
+	
 }
