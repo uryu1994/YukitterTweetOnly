@@ -12,9 +12,9 @@
 <HBox fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
 <ImageView fx:id="icon" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#onChangeMenuPane" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
-         <image>
-            <Image url="@../../../../../Pictures/Yukineko.png" />
-         </image></ImageView>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin></ImageView>
       <StackPane fx:id="stackPane">
          <children>
       <BorderPane fx:id="statusPane" minWidth="-1.0" prefWidth="250.0">
@@ -30,11 +30,8 @@
                      </children>
                   </VBox>
                </top>
-               <right>
-                  <BorderPane prefHeight="20.0" BorderPane.alignment="CENTER" />
-               </right>
                <bottom>
-                  <StackPane alignment="BOTTOM_LEFT" prefHeight="20.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <StackPane alignment="BOTTOM_LEFT" prefHeight="22.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
                         <HBox alignment="TOP_RIGHT" prefWidth="200.0">
                            <children>
@@ -43,19 +40,45 @@
                                     <Font size="9.0" />
                                  </font>
                               </Label>
-                              <ImageView fx:id="retweetUserIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="retweetUserIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true">
                                  <HBox.margin>
                                     <Insets left="3.0" right="3.0" />
                                  </HBox.margin></ImageView>
                            </children>
                         </HBox>
-                        <HBox alignment="BOTTOM_LEFT" prefHeight="20.0" prefWidth="200.0">
+                        <HBox alignment="BOTTOM_LEFT" prefHeight="22.0" prefWidth="200.0">
                            <children>
                     <Label fx:id="via" alignment="BOTTOM_LEFT" prefWidth="-1.0" text="via twitter for iPhone">
                       <font>
                         <Font size="8.0" fx:id="x1" />
                       </font>
                     </Label>
+                              <ImageView fitHeight="13.0" fitWidth="13.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/favorited.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="2.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label fx:id="favoriteCount" text="0">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="13.0" fitWidth="13.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/retweeted.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="2.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label fx:id="retweetCount" text="0">
+                                 <font>
+                                    <Font size="9.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </HBox>
                      </children>
@@ -69,7 +92,10 @@
                 <Font size="11.0" />
               </font>
             </Label>
-                        <FlowPane fx:id="imageFlowPane" />
+                        <FlowPane fx:id="imageFlowPane" hgap="2.0" vgap="2.0">
+                           <opaqueInsets>
+                              <Insets left="10.0" right="10.0" />
+                           </opaqueInsets></FlowPane>
                      </children>
                   </VBox>
                </center>
