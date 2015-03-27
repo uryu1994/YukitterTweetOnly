@@ -1,20 +1,19 @@
 package application;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 
 import serialize.OAuthConfiguration;
+import serialize.Deserialize;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
+import twitterUtil.TwitterUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -27,58 +26,70 @@ import javafx.stage.StageStyle;
 
 public class OAuthController {
 	
-	private OAuthConfiguration consumer = null;
+	//-- リクエストトークンのインスタンス --//
 	private RequestToken requestToken;
+	//-- アクセストークンのインスタンス --//
 	private static AccessToken accessToken;
+	//-- リクエストトークンとアクセストークンの生成に使用するTwitterインスタンス --//
 	private Twitter twitter;
+	//-- OAuthControllerのステージのインスタンス --//
 	private Stage stage;
-	private Stage owner;
 	
 	@FXML
 	private File file;
-	
 	@FXML
 	private WebView webView;
-	
 	@FXML
 	private TextField pinText;
 	
+	/**
+	 * OAuthControllerのコンストラクタ
+	 * 
+	 * 設定ファイルがあればロードしてメイン画面を表示
+	 * 設定ファイルがなければ認証画面を表示
+	 * 認証設定クラスの OAuthConfiguration をデシリアライズ
+	 * 
+	 * @param owner 親ウインドウのStageインスタンス
+	 */
 	public OAuthController (Stage owner) {
 		this.file = new File(".yukitter_setting");
-		this.owner = owner;
-		DeserializationOAuthConfiguration();
+
+		Deserialize.deserializationOAuthConfiguration();
 		
 		if(file.exists()) {
-			loadAccessToken();	
+			loadAccessToken();
 		} else {
-			showOAuthWindow();
+			showOAuthWindow(owner);
 		}
 	}
 	
+	/**
+	 * 設定ファイルをロードしてメイン画面を表示する
+	 * 
+	 */
 	public void loadAccessToken() {
-		try {
+		try{
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			try {
-				OAuthConfiguration.setAccessTokenKey(br.readLine());
-				OAuthConfiguration.setAccessTokenSecret(br.readLine());
-				br.close();
-				System.out.println(consumer);
-				
-				@SuppressWarnings("unused")
-				MainController main = new MainController(OAuthConfiguration.createConfiguration());
+			OAuthConfiguration.setAccessTokenKey(br.readLine());
+			OAuthConfiguration.setAccessTokenSecret(br.readLine());
+			br.close();
+			
+			TwitterUtil.createSingleton();
+			@SuppressWarnings("unused")
+			MainController main = new MainController();
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
-			//--- ファイルがない = まだ認証をしていない = 認証を開始する ---//
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void showOAuthWindow() {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("oAuthWindow.fxml"));
+	/**
+	 * OAuth認証を行うためのウインドウを生成
+	 * 
+	 * @param owner 親ステージのStageインスタンス
+	 */
+	private void showOAuthWindow(Stage owner) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("OAuthWindow.fxml"));
 		loader.setController(this);
 		
 		try {
@@ -97,6 +108,7 @@ public class OAuthController {
 			e.printStackTrace();
 		}
 		
+		//-- リクエストトークンの生成 --//
 		try {
 			twitter = TwitterFactory.getSingleton();
 			twitter.setOAuthConsumer(OAuthConfiguration.getConsumerKey(), OAuthConfiguration.getConsumerSecret());
@@ -104,32 +116,51 @@ public class OAuthController {
 		} catch (TwitterException e) {
 			e.printStackTrace();
 		}
+		
+		//-- リクエストトークンのURLをwebViewで開く --//
 		webView.getEngine().load(requestToken.getAuthenticationURL());
 	}
 	
+	/**
+	 * 認証ボタンを押したときのイベント
+	 * 
+	 * 認証に成功した場合の処理
+	 *  - 認証画面を閉じる
+	 *  - アクセストークンキーとアクセストークンシークレットを認証設定にセットする
+	 *  - 設定ファイルに書き出す
+	 *  - メイン画面の起動
+	 * @TODO:認証に失敗した場合の処理
+	 *  - どうしよう？
+	 *  
+	 * @param e 認証ボタンを押したときのイベント
+	 */
 	public void onOAuth(MouseEvent e) {
-		if(pinText.getText().length() > 0) {
+		if(pinText.getText().length() == 7) {
 			try {
 				accessToken = twitter.getOAuthAccessToken(requestToken, pinText.getText());
+				stage.close();
+				OAuthConfiguration.setAccessTokenKey(accessToken.getToken());
+				OAuthConfiguration.setAccessTokenSecret(accessToken.getTokenSecret());
+				writeAccessToken();
+				
+				TwitterUtil.createSingleton();
+				
+				@SuppressWarnings("unused")
+				MainController main = new MainController();
 			} catch (TwitterException te) {
 				if(401 == te.getStatusCode()){
-					//--- 認証に失敗した場合の処理 ---//
 					System.out.println("Unable to get the access token.");
 				}else{
 					te.printStackTrace();
 				}
 			}
 		}
-		stage.close();
-		OAuthConfiguration.setAccessTokenKey(accessToken.getToken());
-		OAuthConfiguration.setAccessTokenSecret(accessToken.getTokenSecret());
-		System.out.println(consumer);
-		writeAccessToken();
-		
-		@SuppressWarnings("unused")
-		MainController main = new MainController(OAuthConfiguration.createConfiguration());
 	}
 	
+	/**
+	 * 設定ファイルにアクセストークンキーとアクセストークンシークレットを書き出す
+	 * 
+	 */
 	private void writeAccessToken() {
 		try{
 			FileWriter fw = new FileWriter(file);
@@ -141,28 +172,6 @@ public class OAuthController {
 		}
 	}
 	
-	public void DeserializationOAuthConfiguration() {
-		System.out.println("DeserializationConsumer");
-	    ObjectInputStream in = null;
-	    try {
-	    	in = new ObjectInputStream(
-	    			new BufferedInputStream(ClassLoader.getSystemResourceAsStream("serialize/OAuth")));
-	    	consumer = (OAuthConfiguration)in.readObject();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if(in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+
 	
 }

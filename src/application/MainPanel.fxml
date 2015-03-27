@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<ImageView fx:id="icon" fitHeight="70.0" fitWidth="70.0" layoutX="1.0" onMouseClicked="#evolveTimelinePane" pickOnBounds="true" preserveRatio="true" style="" x="0.0" y="0.0" AnchorPane.topAnchor="1.0" />
 		<TextArea fx:id="tweetText" focusTraversable="true" layoutX="73.0" layoutY="33.0" onKeyReleased="#checkTextCount" opacity="1.0" prefHeight="38.0" prefWidth="205.0" promptText="いまなにしてる？" text="" wrapText="true" />
@@ -28,13 +28,11 @@
 				<Menu mnemonicParsing="false" text="File">
 					<items>
 						<MenuItem fx:id="menuTweet" mnemonicParsing="false" onAction="#onTweet" text="Tweet" />
-                  		<MenuItem fx:id="menuTimeline" mnemonicParsing="false" onAction="#evolveTimelinePane" text="evolvTimeline" />
-                  		<MenuItem fx:id="menuTweetPane" mnemonicParsing="false" onAction="#evolveTweetPane" text="evolvTweetPane" />
 					</items>
 				</Menu>
 			</menus>
 		</MenuBar>
 		<Label fx:id="textCounter" layoutX="254.0" layoutY="17.0" text="140" />
-      <ListView fx:id="timeline" layoutX="2.0" layoutY="76.0" prefHeight="280.0" prefWidth="276.0" />
+      <ListView fx:id="timeline" layoutX="2.0" layoutY="82.0" prefHeight="280.0" prefWidth="276.0" />
 	</children>
 </AnchorPane>

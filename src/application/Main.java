@@ -2,6 +2,7 @@ package application;
 
 import java.io.IOException;
 
+import twitterUtil.TwitterUtil;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -20,8 +21,9 @@ public class Main extends Application {
 	
 	@Override
 	public void stop() throws Exception {
-		DialogManager.shutdownDialogs();
-		MainController.shutdownTwitterStream();
+//		DialogManager.getSingleton().shutdownAllDialogs();
+		TwitterUtil.shutdownTwitterStream();
 		super.stop();
+		System.out.println("Shutdown Yukitter");
 	}
 }
